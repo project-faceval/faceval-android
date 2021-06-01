@@ -16,7 +16,7 @@ import com.chardon.faceval.android.ui.recordlist.placeholder.PlaceholderContent
  */
 class RecordFragment : Fragment() {
 
-    private var columnCount = 2
+    private var columnCount = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,10 +47,8 @@ class RecordFragment : Fragment() {
 
     companion object {
 
-        // TODO: Customize parameter argument names
         const val ARG_COLUMN_COUNT = "column-count"
 
-        // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
             RecordFragment().apply {

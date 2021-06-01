@@ -1,6 +1,5 @@
-package com.chardon.faceval.android.rest
+package com.chardon.faceval.android.rest.client
 
-import com.chardon.faceval.android.data.model.User
 import com.chardon.faceval.android.rest.model.PostUser
 import com.chardon.faceval.android.rest.model.UserInfo
 import retrofit2.Call
@@ -42,6 +41,7 @@ interface UserClient {
 
 interface PhotoClient {
 
+    fun getPhoto()
 }
 
 object APISet {

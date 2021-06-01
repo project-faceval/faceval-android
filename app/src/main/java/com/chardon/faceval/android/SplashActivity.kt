@@ -20,6 +20,7 @@ class SplashActivity : AppCompatActivity() {
     private suspend fun loadMainActivityAsync() {
         coroutineScope {
             launch {
+                delay(1000)
                 startActivity(Intent(applicationContext, MainActivity::class.java))
             }
         }

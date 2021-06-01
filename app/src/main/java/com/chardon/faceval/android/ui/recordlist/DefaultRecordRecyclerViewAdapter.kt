@@ -37,7 +37,7 @@ class DefaultRecordRecyclerViewAdapter(
         holder.imageView.setImageURI(Uri.parse(item.imageSrc))
         holder.titleView.text = item.title
         holder.scoreView.text = item.score.toString()
-        holder.dateAddedView.text = SimpleDateFormat("yyyy-mm-dd").format(item.dateAdded)
+        holder.dateAddedView.text = SimpleDateFormat("yyyy-MM-dd").format(item.dateAdded)
     }
 
     override fun getItemCount(): Int = values.size

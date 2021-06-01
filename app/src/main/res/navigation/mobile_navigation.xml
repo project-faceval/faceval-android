@@ -3,23 +3,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@id/navigation_home">
 
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.chardon.faceval.android.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
-
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.chardon.faceval.android.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_navigation_profile_to_loginActivity"
+            app:destination="@id/navigation_login" />
+        <action
+            android:id="@+id/action_navigation_profile_to_settingsActivity2"
+            app:destination="@id/navigation_settings" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.chardon.faceval.android.ui.dashboard.DashboardFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_dashboard" />
+    <activity
+        android:id="@+id/navigation_login"
+        android:name="com.chardon.faceval.android.ui.login.LoginActivity"
+        android:label="activity_login"
+        tools:layout="@layout/activity_login" />
+    <activity
+        android:id="@+id/navigation_settings"
+        android:name="com.chardon.faceval.android.SettingsActivity"
+        android:label="SettingsActivity" />
 
-    <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.chardon.faceval.android.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
 </navigation>

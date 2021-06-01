@@ -30,8 +30,8 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_login">Login Faceval</string>
+    <string name="title_activity_settings">Settings</string>
 
     <!-- Main fragment -->
     <string name="get_started">Take a new photo</string>
@@ -42,4 +42,10 @@
     <string name="title_text">This is a demo title</string>
     <string name="demo_score">8.6</string>
     <string name="demo_date">2021-4-22</string>
+
+    <string name="avatar_description">Avatar of this user</string>
+    <string name="demo_display_name">MacKenzie Hellman</string>
+    <string name="demo_user_id">mhellman</string>
+
+    <string name="title_profile">My Space</string>
 </resources>
