@@ -13,8 +13,10 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
 
-    <!-- Splash -->
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
+
+    <!-- Splash -->
+    <string name="starting" tools:ignore="TypographyEllipsis">Faceval is starting...</string>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>

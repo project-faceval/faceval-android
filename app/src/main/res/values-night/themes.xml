@@ -16,7 +16,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="MainTheme.Splash" parent ="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="MainTheme.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen_night</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">false</item>
