@@ -3,10 +3,10 @@
     <item>
         <color android:color="@android:color/background_light"/>
     </item>
-<!--    <item>-->
-<!--        <bitmap-->
-<!--            android:src="@drawable/fv_splash"-->
-<!--            android:tileMode="disabled"-->
-<!--            android:gravity="center"/>-->
-<!--    </item>-->
+    <item>
+        <bitmap
+            android:src="@drawable/fv_splash"
+            android:tileMode="disabled"
+            android:gravity="center"/>
+    </item>
 </layer-list>

@@ -2,24 +2,37 @@
     <!-- Base application theme. -->
     <style name="Theme.FacevalAndroid" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/amber_200</item>
-        <item name="colorPrimaryVariant">@android:color/background_dark</item>
+        <item name="colorPrimary">@color/light_blue_200</item>
+        <item name="colorPrimaryVariant">@color/light_blue_200</item>
         <item name="colorOnPrimary">@color/black</item>
         <item name="android:textColorPrimary">@color/gray_100</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/blue_200</item>
-        <item name="colorSecondaryVariant">@color/cyan_200</item>
+        <item name="colorSecondary">@color/amber_200</item>
+        <item name="colorSecondaryVariant">@color/orange_200</item>
         <item name="colorOnSecondary">@color/gray_900</item>
         <item name="android:textColorSecondary">@color/gray_800</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorOnPrimary</item>
         <!-- Customize your theme here. -->
     </style>
 
     <style name="MainTheme.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash_screen_night</item>
+        <item name="android:background">@drawable/splash_screen_night</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
+
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/light_blue_200</item>
+        <item name="colorPrimaryVariant">@color/light_blue_200</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="android:textColorPrimary">@color/gray_100</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/amber_200</item>
+        <item name="colorSecondaryVariant">@color/orange_200</item>
+        <item name="colorOnSecondary">@color/gray_900</item>
+        <item name="android:textColorSecondary">@color/gray_800</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorOnPrimary</item>
     </style>
 </resources>

@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
         android:text="@string/starting"
-        app:layout_constraintEnd_toEndOf="@+id/loadingIndicator"
-        app:layout_constraintStart_toStartOf="@+id/loadingIndicator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/loadingIndicator" />
 </androidx.constraintlayout.widget.ConstraintLayout>

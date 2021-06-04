@@ -21,9 +21,14 @@
     <color name="brown_900">#3E2723</color>
 
     <color name="blue_200">#90CAF9</color>
+    <color name="blue_500">#2196F3</color>
     <color name="blue_600">#1E88E5</color>
 
+    <color name="light_blue_200">#81D4FA</color>
+    <color name="light_blue_300">#4FC3F7</color>
+    <color name="light_blue_400">#29B6F6</color>
     <color name="light_blue_600">#039BE5</color>
+    <color name="light_blue_800">#0277BD</color>
 
     <color name="cyan_200">#80DEEA</color>
     <color name="cyan_600">#00ACC1</color>
