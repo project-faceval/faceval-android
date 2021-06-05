@@ -10,4 +10,8 @@ class HomeViewModel : ViewModel() {
 
     val buttonText: LiveData<String>
         get() = _buttonText
+
+    fun callCamera() {
+
+    }
 }

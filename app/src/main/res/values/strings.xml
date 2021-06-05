@@ -50,4 +50,7 @@
     <string name="demo_user_id">mhellman</string>
 
     <string name="title_profile">My Space</string>
+    <string name="capture_image_description">Captured image</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 </resources>
