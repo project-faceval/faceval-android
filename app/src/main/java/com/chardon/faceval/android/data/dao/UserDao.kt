@@ -23,6 +23,9 @@ interface UserDao {
     @Delete
     fun delete(user: User): Int
 
+    @Delete
+    fun deleteAll(): Int
+
     @Update
     fun update(user: User): Int
 }

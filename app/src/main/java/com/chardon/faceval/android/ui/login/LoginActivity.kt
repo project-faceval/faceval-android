@@ -12,14 +12,18 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
+import androidx.room.Room
 import com.chardon.faceval.android.databinding.ActivityLoginBinding
 
 import com.chardon.faceval.android.R
+import com.chardon.faceval.android.data.UserDatabase
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
+
+    private lateinit var userDatabase: UserDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,12 +31,17 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        userDatabase =
+            Room.databaseBuilder(applicationContext, UserDatabase::class.java, "faceval")
+                .build()
+
         val username = binding.username
         val password = binding.password
         val login = binding.login
         val loading = binding.loading
 
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
+        loginViewModel =
+            ViewModelProvider(this, LoginViewModelFactory(userDatabase.userDao()))
             .get(LoginViewModel::class.java)
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {

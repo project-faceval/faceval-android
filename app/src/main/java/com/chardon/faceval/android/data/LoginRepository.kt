@@ -1,6 +1,6 @@
 package com.chardon.faceval.android.data
 
-import com.chardon.faceval.android.data.model.LoggedInUser
+import com.chardon.faceval.android.rest.model.UserInfo
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -10,7 +10,7 @@ import com.chardon.faceval.android.data.model.LoggedInUser
 class LoginRepository(val dataSource: LoginDataSource) {
 
     // in-memory cache of the loggedInUser object
-    var user: LoggedInUser? = null
+    var user: UserInfo? = null
         private set
 
     val isLoggedIn: Boolean
@@ -19,7 +19,15 @@ class LoginRepository(val dataSource: LoginDataSource) {
     init {
         // If user credentials will be cached in local storage, it is recommended it be encrypted
         // @see https://developer.android.com/training/articles/keystore
-        user = null
+        val currentUser = dataSource.getCurrentUser()
+
+        if (currentUser != null) {
+            currentUser.apply {
+                user = UserInfo(id, email, displayName, gender, status, dateJoined)
+            }
+        } else {
+            user = null
+        }
     }
 
     fun logout() {
@@ -27,7 +35,7 @@ class LoginRepository(val dataSource: LoginDataSource) {
         dataSource.logout()
     }
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    fun login(username: String, password: String): Result<UserInfo> {
         // handle login
         val result = dataSource.login(username, password)
 
@@ -38,7 +46,7 @@ class LoginRepository(val dataSource: LoginDataSource) {
         return result
     }
 
-    private fun setLoggedInUser(loggedInUser: LoggedInUser) {
+    private fun setLoggedInUser(loggedInUser: UserInfo) {
         this.user = loggedInUser
         // If user credentials will be cached in local storage, it is recommended it be encrypted
         // @see https://developer.android.com/training/articles/keystore

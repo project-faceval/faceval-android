@@ -22,13 +22,40 @@
             android:contentDescription="@string/capture_image_description"
             tools:srcCompat="@tools:sample/avatars" />
 
-        <ImageView
-            android:id="@+id/frameView"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/positionLayout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/capture_image_description"
-            android:visibility="invisible"
-            app:srcCompat="@drawable/fv_frame" />
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/facePosView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/capture_image_description"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/fv_frame" />
+
+            <TextView
+                android:id="@+id/scoreField"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorOnBackground"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:text="@string/demo_score"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="48sp"
+                app:layout_constraintBottom_toBottomOf="@+id/facePosView"
+                app:layout_constraintEnd_toEndOf="@+id/facePosView"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="@+id/facePosView"
+                app:layout_constraintTop_toTopOf="@+id/facePosView" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </FrameLayout>
 
     <LinearLayout

@@ -36,7 +36,7 @@ interface UserClient {
 
     @POST("auth")
     fun authenticate(@Query("id") userName: String,
-                     @Query("password") password: String): Call<UserInfo>
+                     @Query("password") password: String): Call<Map<String, String>>
 }
 
 interface PhotoClient {
