@@ -1,11 +1,25 @@
 package com.chardon.faceval.android.rest.model
 
 data class ServerInfo(
+    val applications: ApplicationList
+)
+
+data class ApplicationList(
+    val application: List<ApplicationInfo>
+)
+
+data class ApplicationInfo(
     val name: String,
-    val instance: InstanceInfo,
+    val instance: List<InstanceInfo>
 )
 
 data class InstanceInfo(
     val instanceId: String,
-//    val hostName: // TODO: 2021-5-31
+    val hostName: String,
+    val app: String,
+    val ipAddr: String,
+    val status: String,
+    val overriddenStatus: String,
+    val port: Map<String, Any>,
+//    val s
 )
