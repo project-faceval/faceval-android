@@ -15,7 +15,7 @@ class LoginDataSource(private val userDao: UserDao) {
 
     fun login(username: String, password: String): Result<UserInfo> {
         try {
-            val response = userClient.authenticate(username, password).execute()
+            val response = userClient.login(username, password).execute()
             if (!response.isSuccessful || response.body()?.get("status") != "OK") {
                 throw LoginFailedException()
             }

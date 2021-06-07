@@ -6,54 +6,54 @@
     android:viewportHeight="108">
     <path
         android:pathData="M35 40Q35 35 40 35"
-        android:strokeColor="#0277BD"
+        android:strokeColor="#FEFEFE"
         android:strokeWidth="2" />
     <path
         android:pathData="M35 40L35 45"
-        android:strokeColor="#0277BD"
+        android:strokeColor="#FEFEFE"
         android:strokeWidth="2" />
     <path
         android:pathData="M40 35L45 35"
-        android:strokeColor="#0277BD"
+        android:strokeColor="#FEFEFE"
         android:strokeWidth="2" />
     <path
         android:pathData="M68 35Q73 35 73 40"
-        android:strokeColor="#0277BD"
+        android:strokeColor="#FEFEFE"
         android:strokeWidth="2" />
     <path
         android:pathData="M73 40L73 45"
-        android:strokeColor="#0277BD"
+        android:strokeColor="#FEFEFE"
         android:strokeWidth="2" />
     <path
         android:pathData="M68 35L63 35"
-        android:strokeColor="#0277BD"
+        android:strokeColor="#FEFEFE"
         android:strokeWidth="2" />
     <path
         android:pathData="M35 68Q35 73 40 73"
-        android:strokeColor="#0277BD"
+        android:strokeColor="#FEFEFE"
         android:strokeWidth="2" />
     <path
         android:pathData="M35 68L35 63"
-        android:strokeColor="#0277BD"
+        android:strokeColor="#FEFEFE"
         android:strokeWidth="2" />
     <path
         android:pathData="M40 73L45 73"
-        android:strokeColor="#0277BD"
+        android:strokeColor="#FEFEFE"
         android:strokeWidth="2" />
     <path
         android:pathData="M73 68Q73 73 68 73"
-        android:strokeColor="#0277BD"
+        android:strokeColor="#FEFEFE"
         android:strokeWidth="2" />
     <path
         android:pathData="M73 68L73 63"
-        android:strokeColor="#0277BD"
+        android:strokeColor="#FEFEFE"
         android:strokeWidth="2" />
     <path
         android:pathData="M68 73L63 73"
-        android:strokeColor="#0277BD"
+        android:strokeColor="#FEFEFE"
         android:strokeWidth="2" />
     <path
         android:pathData="M44 64Q54 70 64 64"
-        android:strokeColor="#0277BD"
+        android:strokeColor="#FEFEFE"
         android:strokeWidth="2" />
 </vector>

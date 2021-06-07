@@ -1,13 +1,13 @@
 package com.chardon.faceval.android.rest.client
 
-import com.chardon.faceval.android.rest.model.PostUser
-import com.chardon.faceval.android.rest.model.UserInfo
+import com.chardon.faceval.entity.UserInfo
+import com.chardon.faceval.entity.UserInfoUpload
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 
-private const val BASE_URL = "http://127.0.0.1:8729/"
+private const val BASE_URL = "http://127.0.0.1:9988/"
 
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create())
@@ -17,26 +17,26 @@ private val retrofit = Retrofit.Builder()
 interface UserClient {
 
     @GET("user")
-    fun getUser(@Query("id") userName: String): Call<UserInfo>
+    fun getUser(@Query("username") userName: String): Call<UserInfo>
 
     @POST("user")
-    fun createUser(@Body user: PostUser): Call<UserInfo>
+    fun createUser(@Body user: UserInfoUpload): Call<UserInfo>
 
     @PUT("user")
-    fun updateUser(@Body user: PostUser): Call<UserInfo>
+    fun updateUser(@Body user: UserInfoUpload): Call<UserInfo>
 
     @DELETE("user")
-    fun deleteUser(@Query("id") userName: String,
+    fun deleteUser(@Query("username") userName: String,
                    @Query("password") password: String): Call<Map<String, String>>
 
     @PATCH("user")
-    fun updatePassword(@Query("id") userName: String,
+    fun updatePassword(@Query("username") userName: String,
                        @Query("password") oldPassword: String,
                        @Query("new_password") newPassword: String): Call<Map<String, String>>
 
-    @POST("auth")
-    fun authenticate(@Query("id") userName: String,
-                     @Query("password") password: String): Call<Map<String, String>>
+    @POST("login")
+    fun login(@Query("username") userName: String,
+              @Query("password") password: String): Call<UserInfo>
 }
 
 interface PhotoClient {

@@ -9,11 +9,13 @@ import retrofit2.http.Headers
 
 private const val BASE_URL = "http://127.0.0.1:9237/eureka"
 
+@Deprecated("Use high-level web client")
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create())
     .baseUrl(BASE_URL)
     .build()
 
+@Deprecated("Use high-level web client")
 interface EurekaAccessClient {
 
     @Headers("Accept: application/json")
@@ -21,6 +23,7 @@ interface EurekaAccessClient {
     fun getApps(): Call<ServerInfo>
 }
 
+@Deprecated("Use high-level web client")
 object EurekaAccessAbility {
     val client: EurekaAccessClient by lazy {
         retrofit.create(EurekaAccessClient::class.java)
