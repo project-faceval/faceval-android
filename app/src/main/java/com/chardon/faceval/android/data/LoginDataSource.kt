@@ -15,14 +15,9 @@ class LoginDataSource(private val userDao: UserDao) {
 
     fun login(username: String, password: String): Result<UserInfo> {
         try {
-            val response = userClient.login(username, password).execute()
-            if (!response.isSuccessful || response.body()?.status != "OK") {
-                throw LoginFailedException()
-            }
-
-            val retrieveRes = userClient.getUser(username).execute()
+            val retrieveRes = userClient.login(username, password).execute()
             if (!retrieveRes.isSuccessful) {
-                throw Exception("Cannot get user's information")
+                throw LoginFailedException()
             }
 
             val userInfo = retrieveRes.body() ?: throw Exception("Cannot get user's information")

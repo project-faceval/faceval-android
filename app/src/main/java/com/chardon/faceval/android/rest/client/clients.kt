@@ -11,6 +11,7 @@ private const val BASE_URL = "http://127.0.0.1:9988/"
 
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create())
+//    .addCallAdapterFactory(CoroutineCallAdapterFactory())
     .baseUrl(BASE_URL)
     .build()
 
@@ -21,7 +22,7 @@ interface UserClient {
 
     @FormUrlEncoded
     @POST("/user")
-    fun createUser(@FieldMap user: UserInfoUpload): Call<UserInfo>
+    fun createUser(@Body user: UserInfoUpload): Call<UserInfo>
 
     @PUT("/user")
     fun updateUser(@Body user: UserInfoUpload): Call<UserInfo>
@@ -49,7 +50,7 @@ interface PhotoClient {
     @Multipart
     @FormUrlEncoded
     @POST("/photo")
-    fun addPhoto(@PartMap newPhoto: PhotoInfoUpload<MultipartBody.Part>): Call<PhotoInfo>
+    fun addPhoto(@Body newPhoto: PhotoInfoUpload<MultipartBody.Part>): Call<PhotoInfo>
 
     @PUT("/photo")
     fun updatePhotoInfo(@Body newPhotoInfo: PhotoInfoUpdate): Call<PhotoInfo>
@@ -65,8 +66,21 @@ interface AIClient {
     @Multipart
     @FormUrlEncoded
     @POST("/eval")
-    fun scoring(@Field("ext") extension: String,
-                @Part("bimg") image: MultipartBody.Part): Call<List<Double>>
+    fun score(@Field("ext") extension: String,
+              @Part("bimg") image: MultipartBody.Part): Call<List<Double>>
+
+    @Multipart
+    @FormUrlEncoded
+    @POST("/eval/detect")
+    fun detect(@Field("ext") extension: String,
+               @Part("bimg") image: MultipartBody.Part): Call<DetectionResult>
+
+    @Multipart
+    @FormUrlEncoded
+    @POST("/eval/scoring")
+    fun scoreDetected(@Field("ext") extension: String,
+                      @Part("bimg") image: MultipartBody.Part,
+                      @Body detectionResult: DetectionResult): Call<List<Double>>
 }
 
 object APISet {

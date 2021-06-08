@@ -31,7 +31,7 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View? {retrofit2-kotlin-coroutines-adapter
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_profile, container, false)
 

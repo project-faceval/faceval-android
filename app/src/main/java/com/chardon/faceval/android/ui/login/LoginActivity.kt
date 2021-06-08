@@ -33,6 +33,7 @@ class LoginActivity : AppCompatActivity() {
         val password = binding.password
         val login = binding.login
         val loading = binding.loading
+        val registerButton = binding.registerButton
 
         loginViewModel =
             ViewModelProvider(this, LoginViewModelFactory(application))
@@ -97,6 +98,10 @@ class LoginActivity : AppCompatActivity() {
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
                 loginViewModel.login(username.text.toString(), password.text.toString())
+            }
+
+            registerButton.setOnClickListener {
+
             }
         }
     }
