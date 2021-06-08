@@ -1,15 +1,18 @@
 package com.chardon.faceval.android.ui.login
 
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import android.util.Patterns
+import androidx.lifecycle.AndroidViewModel
+import androidx.room.Room
 import com.chardon.faceval.android.data.LoginRepository
 import com.chardon.faceval.android.data.Result
 
 import com.chardon.faceval.android.R
+import com.chardon.faceval.android.data.LoginDataSource
+import com.chardon.faceval.android.data.UserDatabase
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
@@ -17,22 +20,28 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
+    private val userDatabase: UserDatabase = Room.databaseBuilder(
+        getApplication<Application>().applicationContext,
+        UserDatabase::class.java, "faceval").build()
+
+    private val loginDataSource: LoginDataSource = LoginDataSource(userDatabase.userDao())
+
+    private val _loginRepository: LoginRepository = LoginRepository(loginDataSource)
+    val loginRepository: LoginRepository
+        get() = _loginRepository
+
     fun login(username: String, password: String) {
         // can be launched in a separate asynchronous job
-        val result = loginRepository.login(username, password)
+        val result = _loginRepository.login(username, password)
 
         if (result is Result.Success) {
-            val view: LoggedInUserView
-
-            result.data.apply {
-                view = LoggedInUserView(
-                    displayName = displayName,
-                    email = email,
-                    gender = gender,
-                    status = status,
-                    userId = id,
-                )
-            }
+            val view = LoggedInUserView(
+                displayName = result.data.displayName,
+                email = result.data.email,
+                gender = result.data.gender,
+                status = result.data.status,
+                userId = result.data.id,
+            )
 
             _loginResult.value =
                 LoginResult(success = view)
@@ -53,11 +62,7 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
 
     // A placeholder username validation check
     private fun isUserNameValid(username: String): Boolean {
-        return if (username.contains('@')) {
-            Patterns.EMAIL_ADDRESS.matcher(username).matches()
-        } else {
-            username.isNotBlank()
-        }
+        return true
     }
 
     // A placeholder password validation check

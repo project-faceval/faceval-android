@@ -23,25 +23,19 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
 
-    private lateinit var userDatabase: UserDatabase
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        userDatabase =
-            Room.databaseBuilder(applicationContext, UserDatabase::class.java, "faceval")
-                .build()
-
         val username = binding.username
         val password = binding.password
-        val login = binding.login/home/chardon/Android/Sdk
+        val login = binding.login
         val loading = binding.loading
 
         loginViewModel =
-            ViewModelProvider(this, LoginViewModelFactory(userDatabase.userDao()))
+            ViewModelProvider(this, LoginViewModelFactory(application))
             .get(LoginViewModel::class.java)
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {

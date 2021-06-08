@@ -3,7 +3,7 @@ package com.chardon.faceval.android.data
 import com.chardon.faceval.android.data.dao.UserDao
 import com.chardon.faceval.android.data.model.User
 import com.chardon.faceval.android.rest.client.APISet
-import com.chardon.faceval.android.rest.model.UserInfo
+import com.chardon.faceval.entity.UserInfo
 import java.lang.Exception
 
 /**
@@ -16,7 +16,7 @@ class LoginDataSource(private val userDao: UserDao) {
     fun login(username: String, password: String): Result<UserInfo> {
         try {
             val response = userClient.login(username, password).execute()
-            if (!response.isSuccessful || response.body()?.get("status") != "OK") {
+            if (!response.isSuccessful || response.body()?.status != "OK") {
                 throw LoginFailedException()
             }
 

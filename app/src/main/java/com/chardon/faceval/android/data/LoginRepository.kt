@@ -1,13 +1,13 @@
 package com.chardon.faceval.android.data
 
-import com.chardon.faceval.android.rest.model.UserInfo
+import com.chardon.faceval.entity.UserInfo
 
 /**
  * Class that requests authentication and user information from the remote data source and
  * maintains an in-memory cache of login status and user credentials information.
  */
 
-class LoginRepository(val dataSource: LoginDataSource) {
+class LoginRepository(private val dataSource: LoginDataSource) {
 
     // in-memory cache of the loggedInUser object
     var user: UserInfo? = null

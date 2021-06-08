@@ -1,7 +1,7 @@
 package com.chardon.faceval.android.rest.client
 
-import android.media.Image
 import com.chardon.faceval.entity.*
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -19,8 +19,9 @@ interface UserClient {
     @GET("/user")
     fun getUser(@Query("username") userName: String): Call<UserInfo>
 
+    @FormUrlEncoded
     @POST("/user")
-    fun createUser(@Body user: UserInfoUpload): Call<UserInfo>
+    fun createUser(@FieldMap user: UserInfoUpload): Call<UserInfo>
 
     @PUT("/user")
     fun updateUser(@Body user: UserInfoUpload): Call<UserInfo>
@@ -35,18 +36,20 @@ interface UserClient {
                        @Query("new_password") newPassword: String): Call<Map<String, String>>
 
     @POST("/login")
-    fun login(@Query("username") userName: String,
-              @Query("password") password: String): Call<UserInfo>
+    fun login(@Field("username") userName: String,
+              @Field("password") password: String): Call<UserInfo>
 }
 
 interface PhotoClient {
 
     @GET("/photo/{photo_id}/{user_id}")
-    fun getPhoto(@Path("photo_id") photoId: Long,
-                 @Path("user_id") userName: String): Call<PhotoInfo>
+    fun getPhotos(@Path("photo_id") photoId: Long,
+                  @Path("user_id") userName: String): Call<List<PhotoInfo>>
 
+    @Multipart
+    @FormUrlEncoded
     @POST("/photo")
-    fun addPhoto(@Body newPhoto: PhotoInfoUpload<Image>): Call<PhotoInfo>
+    fun addPhoto(@PartMap newPhoto: PhotoInfoUpload<MultipartBody.Part>): Call<PhotoInfo>
 
     @PUT("/photo")
     fun updatePhotoInfo(@Body newPhotoInfo: PhotoInfoUpdate): Call<PhotoInfo>
@@ -59,6 +62,11 @@ interface PhotoClient {
 
 interface AIClient {
 
+    @Multipart
+    @FormUrlEncoded
+    @POST("/eval")
+    fun scoring(@Field("ext") extension: String,
+                @Part("bimg") image: MultipartBody.Part): Call<List<Double>>
 }
 
 object APISet {
