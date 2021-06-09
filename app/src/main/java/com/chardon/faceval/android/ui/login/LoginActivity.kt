@@ -1,6 +1,7 @@
 package com.chardon.faceval.android.ui.login
 
 import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.room.Room
 import com.chardon.faceval.android.databinding.ActivityLoginBinding
@@ -94,14 +96,43 @@ class LoginActivity : AppCompatActivity() {
                 }
                 false
             }
+        }
 
-            login.setOnClickListener {
-                loading.visibility = View.VISIBLE
-                loginViewModel.login(username.text.toString(), password.text.toString())
+        login.setOnClickListener {
+            loading.visibility = View.VISIBLE
+            loginViewModel.login(username.text.toString(), password.text.toString())
+
+            val user = loginViewModel.loginResult.value?.success
+
+            if (user == null) {
+                Toast.makeText(
+                    applicationContext, getString(R.string.login_failed), Toast.LENGTH_LONG)
+                    .show()
+                return@setOnClickListener
             }
 
-            registerButton.setOnClickListener {
+            intent.putExtra("username", user.userId)
+            intent.putExtra("display_name", user.displayName)
+            intent.putExtra("gender", user.gender)
+            intent.putExtra("status", user.status)
 
+            finish()
+        }
+
+        registerButton.setOnClickListener {
+            val intent = Intent(applicationContext, RegisterActivity::class.java)
+            startActivity(intent)
+
+            if (!((intent.extras?.get("canceled") ?: true) as Boolean)) {
+                binding.username.setText(
+                    intent.extras?.get("username") as String,
+                    TextView.BufferType.EDITABLE
+                )
+
+                binding.password.setText(
+                    intent.extras?.get("password") as String,
+                    TextView.BufferType.EDITABLE
+                )
             }
         }
     }
@@ -109,12 +140,19 @@ class LoginActivity : AppCompatActivity() {
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome)
         val displayName = model.displayName
-        // TODO : initiate successful logged in experience
         Toast.makeText(
             applicationContext,
             "$welcome $displayName",
             Toast.LENGTH_LONG
         ).show()
+
+        intent.putExtra("username", model.userId)
+        intent.putExtra("display_name", model.displayName)
+        intent.putExtra("gender", model.gender)
+        intent.putExtra("status", model.status)
+
+//        startActivity(intent)
+        finish()
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {

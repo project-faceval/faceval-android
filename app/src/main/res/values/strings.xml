@@ -43,7 +43,7 @@
 
     <string name="title_text">This is a demo title</string>
     <string name="demo_score">8.6</string>
-    <string name="demo_date">2021-4-22</string>
+    <string name="demo_date">2021–4–22</string>
 
     <string name="avatar_description">Avatar of this user</string>
     <string name="demo_display_name">MacKenzie Hellman</string>
@@ -56,4 +56,15 @@
     <string name="notLoggedInYet">You are not logged in yet 🤷</string>
     <string name="username">User ID</string>
     <string name="register">Register</string>
+    <string name="display_name">Nickname</string>
+    <string name="register_prompt">Create your brand new account!</string>
+
+    <string name="no_username">Please enter user ID</string>
+    <string name="no_email">Please enter email</string>
+    <string name="no_display_name">Please enter your nickname</string>
+    <string name="no_password">Please enter password</string>
+    <string name="password_not_same">The two passwords are not same</string>
+    <string name="confirm_password">Confirm password</string>
+
+    <string name="register_failed">Register failed</string>
 </resources>
