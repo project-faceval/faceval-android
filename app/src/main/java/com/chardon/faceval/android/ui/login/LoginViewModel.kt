@@ -49,29 +49,27 @@ class LoginViewModel(private val userDao: UserDao,
 
     fun login(username: String, password: String) {
         // can be launched in a separate asynchronous job
+        _loginRepository.isInitialized.observe(getApplication()) {
+            uiScope.launch {
+                if (it) {
+                    val result = loginAsync(username, password)
 
-            _loginRepository.isInitialized.observe(getApplication()) {
-                uiScope.launch {
-                    if (it) {
-                        val result = loginAsync(username, password)
+                    if (result is Result.Success) {
+                        val view = LoggedInUserView(
+                            displayName = result.data.displayName,
+                            email = result.data.email,
+                            gender = result.data.gender,
+                            status = result.data.status,
+                            userId = result.data.id,
+                        )
 
-                        if (result is Result.Success) {
-                            val view = LoggedInUserView(
-                                displayName = result.data.displayName,
-                                email = result.data.email,
-                                gender = result.data.gender,
-                                status = result.data.status,
-                                userId = result.data.id,
-                            )
-
-                            _loginResult.value =
-                                LoginResult(success = view)
-                        } else {
-                            _loginResult.value = LoginResult(error = R.string.login_failed)
-                        }
+                        _loginResult.value =
+                            LoginResult(success = view)
+                    } else {
+                        _loginResult.value = LoginResult(error = R.string.login_failed)
                     }
                 }
-
+            }
         }
     }
 
