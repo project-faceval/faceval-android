@@ -77,7 +77,7 @@ class ProfileFragment : Fragment() {
 
                 val extras = intent.extras ?: return@setOnClickListener
 
-                if (!(extras["loggedin"] as Boolean)) {
+                if ((extras["loggedin"] as Boolean?) != true) {
                     return@setOnClickListener
                 }
 

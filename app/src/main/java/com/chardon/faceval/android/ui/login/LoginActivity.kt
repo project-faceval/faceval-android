@@ -89,7 +89,18 @@ class LoginActivity : AppCompatActivity() {
             }
             setResult(Activity.RESULT_OK)
 
+            val model = loginResult.success
+
             //Complete and destroy login activity once successful
+
+            if (model != null) {
+                intent.putExtra("username", model.userId)
+                intent.putExtra("display_name", model.displayName)
+                intent.putExtra("gender", model.gender)
+                intent.putExtra("status", model.status)
+                intent.putExtra("loggedin", true)
+            }
+
             finish()
         })
 
@@ -123,23 +134,6 @@ class LoginActivity : AppCompatActivity() {
         login.setOnClickListener {
             loading.visibility = View.VISIBLE
             loginViewModel.login(username.text.toString(), password.text.toString())
-
-            val user = loginViewModel.loginResult.value?.success
-
-            if (user == null) {
-                Toast.makeText(
-                    applicationContext, getString(R.string.login_failed), Toast.LENGTH_LONG)
-                    .show()
-                return@setOnClickListener
-            }
-
-            intent.putExtra("username", user.userId)
-            intent.putExtra("display_name", user.displayName)
-            intent.putExtra("gender", user.gender)
-            intent.putExtra("status", user.status)
-            intent.putExtra("date_added", Date().toString())
-
-            finish()
         }
 
         registerButton.setOnClickListener {
@@ -168,15 +162,6 @@ class LoginActivity : AppCompatActivity() {
             "$welcome $displayName",
             Toast.LENGTH_LONG
         ).show()
-
-        intent.putExtra("username", model.userId)
-        intent.putExtra("display_name", model.displayName)
-        intent.putExtra("gender", model.gender)
-        intent.putExtra("status", model.status)
-        intent.putExtra("loggedin", true)
-
-//        startActivity(intent)
-        finish()
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
