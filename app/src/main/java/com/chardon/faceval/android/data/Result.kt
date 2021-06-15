@@ -1,6 +1,6 @@
 package com.chardon.faceval.android.data
 
-import com.chardon.faceval.android.rest.model.UserInfo
+import com.chardon.faceval.entity.UserInfo
 
 /**
  * A generic class that holds a value with its loading status.

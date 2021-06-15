@@ -2,7 +2,6 @@ package com.chardon.faceval.android.data.dao
 
 import androidx.room.*
 import com.chardon.faceval.android.data.model.User
-import com.chardon.faceval.android.data.model.UserWithPhotoList
 
 @Dao
 interface UserDao {
@@ -13,19 +12,19 @@ interface UserDao {
     @Query("SELECT * FROM user WHERE is_active = 1 LIMIT 1;")
     fun getCurrent(): User
 
-    @Transaction
-    @Query("SELECT * FROM user WHERE is_active = 1 LIMIT 1")
-    fun getUserDetails(): UserWithPhotoList
+//    @Transaction
+//    @Query("SELECT * FROM user WHERE is_active = 1 LIMIT 1")
+//    fun getUserDetails(): UserWithPhotoList
 
     @Insert
-    fun insert(newUser: User): Int
+    fun insert(vararg users: User)
 
     @Delete
-    fun delete(user: User): Int
+    fun delete(user: User)
 
-    @Delete
-    fun deleteAll(): Int
+    @Query("DELETE FROM user;")
+    fun deleteAll()
 
     @Update
-    fun update(user: User): Int
+    fun update(user: User)
 }

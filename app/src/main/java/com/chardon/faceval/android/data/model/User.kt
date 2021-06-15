@@ -15,7 +15,7 @@ data class User (
     @ColumnInfo(name = "password")
     var password: String?,
     @ColumnInfo(name = "date_joined")
-    val dateJoined: Date,
+    val dateJoined: String?,
     @ColumnInfo(name = "display_name")
     var displayName: String,
     @ColumnInfo(name = "gender")

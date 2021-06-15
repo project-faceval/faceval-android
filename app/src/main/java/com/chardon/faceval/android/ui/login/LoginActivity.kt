@@ -9,6 +9,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -19,11 +20,23 @@ import com.chardon.faceval.android.databinding.ActivityLoginBinding
 
 import com.chardon.faceval.android.R
 import com.chardon.faceval.android.data.UserDatabase
+import com.chardon.faceval.android.data.dao.UserDao
+import java.util.*
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
+
+    private lateinit var userDao: UserDao
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        android.R.id.home -> {
+            finish()
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,15 +44,24 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        intent.putExtra("loggedin", false)
+
         val username = binding.username
         val password = binding.password
         val login = binding.login
         val loading = binding.loading
         val registerButton = binding.registerButton
 
+        userDao = UserDatabase.getInstance(application).userDao
+
         loginViewModel =
-            ViewModelProvider(this, LoginViewModelFactory(application))
+            ViewModelProvider(this, LoginViewModelFactory(userDao, application))
             .get(LoginViewModel::class.java)
+
+        binding.loginViewModel = loginViewModel
+        binding.lifecycleOwner = this
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer
@@ -115,6 +137,7 @@ class LoginActivity : AppCompatActivity() {
             intent.putExtra("display_name", user.displayName)
             intent.putExtra("gender", user.gender)
             intent.putExtra("status", user.status)
+            intent.putExtra("date_added", Date().toString())
 
             finish()
         }
@@ -150,6 +173,7 @@ class LoginActivity : AppCompatActivity() {
         intent.putExtra("display_name", model.displayName)
         intent.putExtra("gender", model.gender)
         intent.putExtra("status", model.status)
+        intent.putExtra("loggedin", true)
 
 //        startActivity(intent)
         finish()

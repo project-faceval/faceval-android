@@ -15,7 +15,7 @@ data class Photo(
     @ColumnInfo(name = "user_id")
     val userId: String,
     @ColumnInfo(name = "picture")
-    val picture: Bitmap,
+    val picture: String,
     @ColumnInfo(name = "score")
     val score: Short?,
     @ColumnInfo(name = "face_positions")
@@ -25,5 +25,5 @@ data class Photo(
     @ColumnInfo(name = "description")
     var description: String? = null,
     @ColumnInfo(name = "date_added")
-    val dateAdded: Date,
+    val dateAdded: String,
 )

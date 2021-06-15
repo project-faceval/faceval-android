@@ -1,16 +1,29 @@
 package com.chardon.faceval.android.rest.client
 
 import com.chardon.faceval.entity.*
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.jackson.JacksonConverterFactory
 import retrofit2.http.*
 
 private const val BASE_URL = "http://127.0.0.1:9988/"
 
+object ObjectMapperFactory {
+
+    fun getObjectMapper(): ObjectMapper {
+        val newObjectMapper = ObjectMapper()
+        newObjectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+
+        return newObjectMapper
+    }
+}
+
 private val retrofit = Retrofit.Builder()
-    .addConverterFactory(MoshiConverterFactory.create())
+//    .addConverterFactory(MoshiConverterFactory.create())
+    .addConverterFactory(JacksonConverterFactory.create(ObjectMapperFactory.getObjectMapper()))
 //    .addCallAdapterFactory(CoroutineCallAdapterFactory())
     .baseUrl(BASE_URL)
     .build()

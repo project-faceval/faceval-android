@@ -11,8 +11,18 @@ import com.chardon.faceval.android.data.Result
 import com.chardon.faceval.android.R
 import com.chardon.faceval.android.data.LoginDataSource
 import com.chardon.faceval.android.data.UserDatabase
+import com.chardon.faceval.android.data.dao.UserDao
+import com.chardon.faceval.entity.UserInfo
+import kotlinx.coroutines.*
 
-class LoginViewModel(application: Application) : AndroidViewModel(application) {
+class LoginViewModel(private val userDao: UserDao,
+                     application: Application) : AndroidViewModel(application) {
+
+    // Kotlin coroutine definitions
+    private var viewModelJob = Job()
+
+    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    // End
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
@@ -20,33 +30,48 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
-    private val userDatabase: UserDatabase = Room.databaseBuilder(
-        getApplication<Application>().applicationContext,
-        UserDatabase::class.java, "faceval").build()
-
-    private val loginDataSource: LoginDataSource = LoginDataSource(userDatabase.userDao())
+    private val loginDataSource: LoginDataSource = LoginDataSource(userDao)
 
     private val _loginRepository: LoginRepository = LoginRepository(loginDataSource)
     val loginRepository: LoginRepository
         get() = _loginRepository
 
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
+    }
+
+    private suspend fun loginAsync(username: String, password: String): Result<UserInfo> {
+        return withContext(Dispatchers.IO) {
+            _loginRepository.login(username, password)
+        }
+    }
+
     fun login(username: String, password: String) {
         // can be launched in a separate asynchronous job
-        val result = _loginRepository.login(username, password)
 
-        if (result is Result.Success) {
-            val view = LoggedInUserView(
-                displayName = result.data.displayName,
-                email = result.data.email,
-                gender = result.data.gender,
-                status = result.data.status,
-                userId = result.data.id,
-            )
+            _loginRepository.isInitialized.observe(getApplication()) {
+                uiScope.launch {
+                    if (it) {
+                        val result = loginAsync(username, password)
 
-            _loginResult.value =
-                LoginResult(success = view)
-        } else {
-            _loginResult.value = LoginResult(error = R.string.login_failed)
+                        if (result is Result.Success) {
+                            val view = LoggedInUserView(
+                                displayName = result.data.displayName,
+                                email = result.data.email,
+                                gender = result.data.gender,
+                                status = result.data.status,
+                                userId = result.data.id,
+                            )
+
+                            _loginResult.value =
+                                LoginResult(success = view)
+                        } else {
+                            _loginResult.value = LoginResult(error = R.string.login_failed)
+                        }
+                    }
+                }
+
         }
     }
 

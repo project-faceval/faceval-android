@@ -4,12 +4,17 @@ import com.chardon.faceval.android.data.dao.UserDao
 import com.chardon.faceval.android.data.model.User
 import com.chardon.faceval.android.rest.client.APISet
 import com.chardon.faceval.entity.UserInfo
+import kotlinx.coroutines.*
 import java.lang.Exception
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
  */
 class LoginDataSource(private val userDao: UserDao) {
+
+    private var dataSourceJob = Job()
+
+    private val uiScope = CoroutineScope(Dispatchers.Main + dataSourceJob)
 
     private val userClient = APISet.userClient
 
@@ -25,7 +30,9 @@ class LoginDataSource(private val userDao: UserDao) {
             userDao.insert(
                 User(
                     userInfo.id, userInfo.email, password,
-                    userInfo.dateAdded, userInfo.displayName, userInfo.gender,
+                    userInfo.dateAdded.toString(),
+                    userInfo.displayName,
+                    userInfo.gender,
                     userInfo.status, true
                 )
             )
@@ -40,13 +47,21 @@ class LoginDataSource(private val userDao: UserDao) {
         userDao.deleteAll()
     }
 
-    fun isLoggedIn(): Boolean {
+    suspend fun isLoggedIn(): Boolean {
         return getCurrentUser() != null
     }
 
-    fun getCurrentUser(): User? {
-        val userList = userDao.getAll()
-        return if (userList.count() > 0) userList[0] else null
+    private suspend fun getAllAsync(): List<User> {
+        return withContext(Dispatchers.IO) {
+            userDao.getAll()
+        }
+    }
+
+    suspend fun getCurrentUser(): User? {
+        return withContext(Dispatchers.IO) {
+            val userList = getAllAsync()
+            if (userList.count() > 0) userList[0] else null
+        }
     }
 }
 
