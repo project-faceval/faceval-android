@@ -18,9 +18,9 @@ import java.util.*
 class LoginRepository(private val dataSource: LoginDataSource,
                       private val whenReady: Action = Action {  }) : LatePrepared {
 
-    private var repoJob = Job()
+    private var initJob = Job()
 
-    private val uiScope = CoroutineScope(Dispatchers.Main + repoJob)
+    private val asyncInitScope = CoroutineScope(Dispatchers.Main + initJob)
 
     // in-memory cache of the loggedInUser object
     var user: UserInfo? = null
@@ -43,7 +43,7 @@ class LoginRepository(private val dataSource: LoginDataSource,
         }
     }
 
-    suspend fun refreshAsync() {
+    private suspend fun refreshAsync() {
         val currentUser = dataSource.getCurrentUser()
         setDBUser(currentUser)
         _isInitialized.value = true
@@ -54,21 +54,21 @@ class LoginRepository(private val dataSource: LoginDataSource,
         // @see https://developer.android.com/training/articles/keystore
         _isInitialized.value = false
 
-        repoJob.invokeOnCompletion {
+        initJob.invokeOnCompletion {
             whenReady.invoke()
         }
 
-        uiScope.launch {
+        asyncInitScope.launch {
             refreshAsync()
-            repoJob.complete()
+            initJob.complete()
         }
     }
 
     override fun ready(callback: Action) {
-        if (repoJob.isCompleted) {
+        if (initJob.isCompleted) {
             callback.invoke()
         } else {
-            repoJob.invokeOnCompletion {
+            initJob.invokeOnCompletion {
                 callback.invoke()
             }
         }
