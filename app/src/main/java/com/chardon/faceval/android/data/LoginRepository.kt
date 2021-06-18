@@ -68,8 +68,10 @@ class LoginRepository(private val dataSource: LoginDataSource,
         if (initJob.isCompleted) {
             callback.invoke()
         } else {
-            initJob.invokeOnCompletion {
-                callback.invoke()
+            synchronized(initJob) {
+                initJob.invokeOnCompletion {
+                    callback.invoke()
+                }
             }
         }
     }
