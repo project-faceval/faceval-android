@@ -65,15 +65,16 @@ class LoginRepository(private val dataSource: LoginDataSource,
     }
 
     override fun ready(callback: Action) {
-        if (initJob.isCompleted) {
-            callback.invoke()
-        } else {
-            synchronized(initJob) {
+        synchronized(initJob) {
+            if (!initJob.isCompleted) {
                 initJob.invokeOnCompletion {
                     callback.invoke()
                 }
+                return
             }
         }
+
+        callback.invoke()
     }
 
     suspend fun logout() {
