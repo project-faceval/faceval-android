@@ -35,6 +35,7 @@ class LoginViewModel(private val userDao: UserDao,
 
     override fun onCleared() {
         super.onCleared()
+        resetLoginResult()
         viewModelJob.cancel()
     }
 

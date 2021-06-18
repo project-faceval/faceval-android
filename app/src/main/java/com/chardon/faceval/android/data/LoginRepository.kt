@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.chardon.faceval.android.data.model.User
 import com.chardon.faceval.android.util.Action
 import com.chardon.faceval.android.util.DateFormatUtil.parseDate
-import com.chardon.faceval.android.util.Preparing
+import com.chardon.faceval.android.util.LatePrepared
 import com.chardon.faceval.entity.UserInfo
 import kotlinx.coroutines.*
 import java.util.*
@@ -16,7 +16,7 @@ import java.util.*
  */
 
 class LoginRepository(private val dataSource: LoginDataSource,
-                      private val whenReady: Action = Action {  }) : Preparing {
+                      private val whenReady: Action = Action {  }) : LatePrepared {
 
     private var repoJob = Job()
 
@@ -64,12 +64,12 @@ class LoginRepository(private val dataSource: LoginDataSource,
         }
     }
 
-    override fun ready(action: Action) {
+    override fun ready(callback: Action) {
         if (repoJob.isCompleted) {
-            action.invoke()
+            callback.invoke()
         } else {
             repoJob.invokeOnCompletion {
-                action.invoke()
+                callback.invoke()
             }
         }
     }
