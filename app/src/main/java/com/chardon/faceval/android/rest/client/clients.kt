@@ -1,13 +1,11 @@
 package com.chardon.faceval.android.rest.client
 
+import com.chardon.faceval.android.util.DateFormatUtil
 import com.chardon.faceval.entity.*
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.Deferred
-import okhttp3.MultipartBody
-import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import retrofit2.http.*
@@ -18,6 +16,7 @@ private val retrofit by lazy {
     Retrofit.Builder()
         .addConverterFactory(JacksonConverterFactory.create(jacksonObjectMapper().apply {
             propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+            dateFormat = DateFormatUtil.dateFormat
         }))
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .baseUrl(BASE_URL)

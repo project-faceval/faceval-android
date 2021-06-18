@@ -11,16 +11,13 @@ import com.chardon.faceval.entity.UserInfo
 class ProfileViewModel : ViewModel() {
 
     private val _displayName = MutableLiveData<String>()
-    val displayName: LiveData<String>
-        get() = _displayName
+    val displayName: LiveData<String> = _displayName
 
     private val _userName = MutableLiveData<String>()
-    val userName: LiveData<String>
-        get() = _userName
+    val userName: LiveData<String> = _userName
 
     private val _gender = MutableLiveData<Boolean?>()
-    val gender: LiveData<Boolean?>
-        get() = _gender
+    val gender: LiveData<Boolean?> = _gender
 
     fun setUser(userInfo: UserInfo) {
         _displayName.value = userInfo.displayName

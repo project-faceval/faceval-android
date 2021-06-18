@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.chardon.faceval.android.R
@@ -34,6 +32,8 @@ class HomeFragment : Fragment() {
             inflater, R.layout.fragment_home, container, false
         )
 
+        binding.statsFrame.visibility = View.GONE
+
         val application = requireActivity().application
 
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -56,19 +56,20 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        val repo = loginViewModel.loginRepository
+        loginViewModel.loginRepository.ready {
+            val repo = loginViewModel.loginRepository
 
-        binding.notLoginFrame1.isGone = repo.isLoggedIn
-        binding.statsFrame.isGone = !repo.isLoggedIn
-        binding.loginButtonHome.isGone = repo.isLoggedIn
-        binding.getStartedButton.isEnabled = repo.isLoggedIn
+            binding.statsFrame.isGone = !repo.isLoggedIn
+            binding.loginButtonHome.isGone = repo.isLoggedIn
+            binding.getStartedButton.isEnabled = repo.isLoggedIn
 
-        if (repo.isLoggedIn && repo.user != null) {
-            binding.aChicken.text = getString(R.string.chicken_emoji)
-            binding.signinPrompt.text = getString(R.string.signedin_prompt)
-        } else {
-            binding.aChicken.text = getString(R.string.egg_emoji)
-            binding.signinPrompt.text = getString(R.string.signin_prompt)
+            if (repo.isLoggedIn && repo.user != null) {
+                binding.aChicken.text = getString(R.string.chicken_emoji)
+                binding.signinPrompt.text = getString(R.string.signedin_prompt)
+            } else {
+                binding.aChicken.text = getString(R.string.egg_emoji)
+                binding.signinPrompt.text = getString(R.string.signin_prompt)
+            }
         }
     }
 }

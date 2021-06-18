@@ -19,7 +19,7 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/notLoginFrame1"
+            android:id="@+id/guide_frame"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@color/light_blue_600"
@@ -75,7 +75,7 @@
             app:layout_constraintBottom_toTopOf="@+id/statsFrame"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/notLoginFrame1" />
+            app:layout_constraintTop_toBottomOf="@+id/guide_frame" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/statsFrame"

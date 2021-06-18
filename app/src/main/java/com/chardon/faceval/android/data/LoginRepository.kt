@@ -2,19 +2,21 @@ package com.chardon.faceval.android.data
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.chardon.faceval.android.data.model.User
+import com.chardon.faceval.android.util.Action
+import com.chardon.faceval.android.util.DateFormatUtil.parseDate
+import com.chardon.faceval.android.util.Preparing
 import com.chardon.faceval.entity.UserInfo
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import java.sql.Date
+import kotlinx.coroutines.*
+import java.util.*
 
 /**
  * Class that requests authentication and user information from the remote data source and
  * maintains an in-memory cache of login status and user credentials information.
  */
 
-class LoginRepository(private val dataSource: LoginDataSource) {
+class LoginRepository(private val dataSource: LoginDataSource,
+                      private val whenReady: Action = Action {  }) : Preparing {
 
     private var repoJob = Job()
 
@@ -31,17 +33,19 @@ class LoginRepository(private val dataSource: LoginDataSource) {
     val isInitialized: LiveData<Boolean>
         get() = _isInitialized
 
-    suspend fun initialize() {
-        val currentUser = dataSource.getCurrentUser()
-
-        if (currentUser != null) {
-            currentUser.apply {
-                user = UserInfo(id, email, displayName, gender, status, Date.valueOf(dateJoined))
-            }
-        } else {
-            user = null
+    private fun setDBUser(currentUser: User?) {
+        user = currentUser?.let {
+            UserInfo(
+                it.id, it.email, it.displayName,
+                it.gender, it.status,
+                it.dateJoined?.parseDate() ?: Date()
+            )
         }
+    }
 
+    suspend fun refreshAsync() {
+        val currentUser = dataSource.getCurrentUser()
+        setDBUser(currentUser)
         _isInitialized.value = true
     }
 
@@ -50,14 +54,32 @@ class LoginRepository(private val dataSource: LoginDataSource) {
         // @see https://developer.android.com/training/articles/keystore
         _isInitialized.value = false
 
+        repoJob.invokeOnCompletion {
+            whenReady.invoke()
+        }
+
         uiScope.launch {
-            initialize()
+            refreshAsync()
+            repoJob.complete()
         }
     }
 
-    fun logout() {
+    override fun ready(action: Action) {
+        if (repoJob.isCompleted) {
+            action.invoke()
+        } else {
+            repoJob.invokeOnCompletion {
+                action.invoke()
+            }
+        }
+    }
+
+    suspend fun logout() {
+        withContext(Dispatchers.IO) {
+            dataSource.logout()
+        }
+
         user = null
-        dataSource.logout()
     }
 
     suspend fun login(username: String, password: String): Result<UserInfo> {

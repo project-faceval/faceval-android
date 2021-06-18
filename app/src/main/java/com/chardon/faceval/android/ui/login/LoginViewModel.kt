@@ -9,6 +9,7 @@ import com.chardon.faceval.android.data.LoginDataSource
 import com.chardon.faceval.android.data.LoginRepository
 import com.chardon.faceval.android.data.Result
 import com.chardon.faceval.android.data.dao.UserDao
+import com.chardon.faceval.android.util.Action
 import com.chardon.faceval.entity.UserInfo
 import kotlinx.coroutines.*
 import java.util.regex.Pattern
@@ -19,7 +20,7 @@ class LoginViewModel(private val userDao: UserDao,
     // Kotlin coroutine definitions
     private var viewModelJob = Job()
 
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     // End
 
     private val _loginForm = MutableLiveData<LoginFormState>()
@@ -38,24 +39,20 @@ class LoginViewModel(private val userDao: UserDao,
         viewModelJob.cancel()
     }
 
-    fun login(username: String, password: String) {
+    fun login(username: String, password: String, callback: Action = Action {  }) {
         // can be launched in a separate asynchronous job
-        _loginRepository.isInitialized.apply {
-            if (value == true) {
-                executeLogin(username, password)
-            } else {
-                observe(getApplication()) { value ->
-                    if (value) {
-                        executeLogin(username, password)
-                        removeObserver(getApplication())
-                    }
-                }
-            }
+        _loginRepository.ready {
+            executeLogin(username, password, callback)
         }
     }
 
-    private fun executeLogin(username: String, password: String) {
-        uiScope.launch {
+    private fun executeLogin(username: String, password: String, callback: Action) {
+        val loginJob = Job()
+        val loginScope = CoroutineScope(Dispatchers.Main + loginJob)
+
+        loginJob.invokeOnCompletion { callback.invoke() }
+
+        loginScope.launch {
             val result = _loginRepository.login(username, password)
 
             if (result is Result.Success) {
@@ -71,6 +68,8 @@ class LoginViewModel(private val userDao: UserDao,
             } else {
                 _loginResult.value = LoginResult(error = R.string.login_failed)
             }
+
+            loginJob.complete()
         }
     }
 
@@ -84,7 +83,17 @@ class LoginViewModel(private val userDao: UserDao,
         }
     }
 
-    fun logout() = _loginRepository.logout()
+    fun logout(callback: Action = Action {  }) {
+        val logoutJob = Job()
+        val logoutAsyncScope = CoroutineScope(Dispatchers.Main + logoutJob)
+
+        logoutJob.invokeOnCompletion { callback.invoke() }
+
+        logoutAsyncScope.launch {
+            _loginRepository.logout()
+            logoutJob.complete()
+        }
+    }
 
     // A placeholder username validation check
     private fun isUserNameValid(username: String): Boolean {

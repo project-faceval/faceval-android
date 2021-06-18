@@ -1,7 +1,6 @@
 package com.chardon.faceval.android.ui.profile
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,21 +9,16 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
-import androidx.room.Room
 import com.chardon.faceval.android.R
-import com.chardon.faceval.android.data.LoginDataSource
-import com.chardon.faceval.android.data.LoginRepository
 import com.chardon.faceval.android.data.UserDatabase
-import com.chardon.faceval.android.data.dao.UserDao
 import com.chardon.faceval.android.databinding.FragmentProfileBinding
 import com.chardon.faceval.android.ui.login.LoginActivity
 import com.chardon.faceval.android.ui.login.LoginViewModel
 import com.chardon.faceval.android.ui.login.LoginViewModelFactory
 import com.chardon.faceval.entity.UserInfo
-import java.sql.Date
+import kotlinx.coroutines.*
+import java.util.*
 
 class ProfileFragment : Fragment() {
 
@@ -73,7 +67,7 @@ class ProfileFragment : Fragment() {
             loginButton.setOnClickListener {
                 val intent = Intent(requireActivity().applicationContext, LoginActivity::class.java)
 
-                startActivity(intent)
+                startActivityForResult(intent, 0)
 
                 val extras = intent.extras ?: return@setOnClickListener
 
@@ -87,17 +81,31 @@ class ProfileFragment : Fragment() {
                         displayName = extras["display_name"] as String,
                         gender = extras["gender"] as Boolean,
                         status = extras["status"] as String,
-                        dateAdded = Date.valueOf(extras["date_added"] as String),
+                        dateAdded = Date(),
                         email = ""
                     )
                 )
+
+                val localJob = Job()
+                val localScope = CoroutineScope(Dispatchers.Main + localJob)
+
+                localJob.invokeOnCompletion {
+                    refreshUI()
+                }
+
+                localScope.launch {
+                    loginViewModel?.loginRepository?.refreshAsync()
+                    localJob.complete()
+                }
             }
 
             logoutButton.setOnClickListener {
                 AlertDialog.Builder(requireActivity())
+                    .setTitle(R.string.logout_confirm_title)
                     .setPositiveButton(R.string.confirm) { _, _ ->
-                        loginViewModel?.loginRepository?.logout()
-                        loginPrompt.isGone = false
+                        loginViewModel?.logout {
+                            loginPrompt.isGone = false
+                        }
                     }
                     .setNegativeButton(android.R.string.cancel) { _, _ -> }
                     .show()
@@ -109,13 +117,18 @@ class ProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        refreshUI()
+    }
 
-        val repo = loginViewModel.loginRepository
+    private fun refreshUI() {
+        loginViewModel.loginRepository.ready {
+            val repo = loginViewModel.loginRepository
 
-        binding.loginPrompt.isGone = repo.isLoggedIn
+            binding.loginPrompt.isGone = repo.isLoggedIn
 
-        if (repo.isLoggedIn && repo.user != null) {
-            profileViewModel.setUser(repo.user!!)
+            if (repo.isLoggedIn && repo.user != null) {
+                profileViewModel.setUser(repo.user!!)
+            }
         }
     }
 }
