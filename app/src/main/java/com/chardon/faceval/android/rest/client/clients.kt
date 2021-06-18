@@ -14,21 +14,15 @@ import retrofit2.http.*
 
 private const val BASE_URL = "http://47.109.80.112:9988/"
 
-object ConverterFactoryFactory {
-
-    fun getConverterFactory(): Converter.Factory {
-        val newObjectMapper = jacksonObjectMapper()
-        newObjectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
-
-        return JacksonConverterFactory.create(newObjectMapper)
-    }
+private val retrofit by lazy {
+    Retrofit.Builder()
+        .addConverterFactory(JacksonConverterFactory.create(jacksonObjectMapper().apply {
+            propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+        }))
+        .addCallAdapterFactory(CoroutineCallAdapterFactory())
+        .baseUrl(BASE_URL)
+        .build()
 }
-
-private val retrofit = Retrofit.Builder()
-    .addConverterFactory(ConverterFactoryFactory.getConverterFactory())
-    .addCallAdapterFactory(CoroutineCallAdapterFactory())
-    .baseUrl(BASE_URL)
-    .build()
 
 interface UserClient {
 
