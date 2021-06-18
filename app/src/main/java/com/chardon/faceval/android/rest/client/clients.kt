@@ -25,7 +25,6 @@ object ConverterFactoryFactory {
 }
 
 private val retrofit = Retrofit.Builder()
-//    .addConverterFactory(MoshiConverterFactory.create())
     .addConverterFactory(ConverterFactoryFactory.getConverterFactory())
     .addCallAdapterFactory(CoroutineCallAdapterFactory())
     .baseUrl(BASE_URL)
