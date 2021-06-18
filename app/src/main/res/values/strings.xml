@@ -52,8 +52,8 @@
     <string name="title_profile">My Space</string>
     <string name="capture_image_description">Captured image</string>
     <string name="confirm">Confirm</string>
-    <string name="cancel">Cancel</string>
-    <string name="notLoggedInYet">You are not logged in yet 🤷</string>
+    <string name="cancel">@android:string/cancel</string>
+    <string name="notLoggedInYet">Sign in to explore Faceval! 🏂</string>
     <string name="username">User ID</string>
     <string name="register">Register</string>
     <string name="display_name">Nickname</string>
@@ -68,4 +68,17 @@
 
     <string name="register_failed">Register failed</string>
     <string name="logout">Logout</string>
+    <string name="best_score_prompt">Your best score</string>
+    <string name="signin_prompt">Sign in to explore!</string>
+    <string name="signedin_prompt">Let\'s rock!</string>
+
+    <string name="egg_emoji">🥚</string>
+    <string name="chicken_emoji">🐣</string>
+    <string name="nerd_emoji">🤓</string>
+    <string name="covered_eyes_monkey_emoji">🙈</string>
+    <string name="bunny_women_emoji">👯</string>
+    <string name="cat_love_emoji">😻</string>
+    <string name="scoring_prompt">Scoring...</string>
+
+    <string name="logout_confirm_title">Do you really want to logout?</string>
 </resources>

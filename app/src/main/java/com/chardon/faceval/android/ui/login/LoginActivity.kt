@@ -89,18 +89,7 @@ class LoginActivity : AppCompatActivity() {
             }
             setResult(Activity.RESULT_OK)
 
-            val model = loginResult.success
-
             //Complete and destroy login activity once successful
-
-            if (model != null) {
-                intent.putExtra("username", model.userId)
-                intent.putExtra("display_name", model.displayName)
-                intent.putExtra("gender", model.gender)
-                intent.putExtra("status", model.status)
-                intent.putExtra("loggedin", true)
-            }
-
             finish()
         })
 
@@ -150,6 +139,8 @@ class LoginActivity : AppCompatActivity() {
                     intent.extras?.get("password") as String,
                     TextView.BufferType.EDITABLE
                 )
+
+                binding.login.performClick()
             }
         }
     }
@@ -162,6 +153,12 @@ class LoginActivity : AppCompatActivity() {
             "$welcome $displayName",
             Toast.LENGTH_LONG
         ).show()
+
+        intent.putExtra("username", model.userId)
+        intent.putExtra("display_name", model.displayName)
+        intent.putExtra("gender", model.gender)
+        intent.putExtra("status", model.status)
+        intent.putExtra("loggedin", true)
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {

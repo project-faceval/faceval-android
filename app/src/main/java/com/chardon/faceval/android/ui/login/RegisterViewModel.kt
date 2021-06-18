@@ -12,12 +12,13 @@ class RegisterViewModel : ViewModel() {
         APISet.userClient
     }
 
-    fun register(userInfoUpload: UserInfoUpload): UserInfo? {
-        val response = userClient.createUser(userInfoUpload).execute()
-        if (response.isSuccessful) {
-            return response.body()
-        }
+    suspend fun register(userInfoUpload: UserInfoUpload): UserInfo? {
+        val deferredJob = userClient.createUserAsync(userInfoUpload)
 
-        return null
+        return try {
+            deferredJob.await()
+        } catch (e: Exception) {
+            null
+        }
     }
 }

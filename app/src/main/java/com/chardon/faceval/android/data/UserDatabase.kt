@@ -2,7 +2,6 @@ package com.chardon.faceval.android.data
 
 import android.content.Context
 import android.service.autofill.UserData
-import androidx.annotation.experimental.Experimental
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase

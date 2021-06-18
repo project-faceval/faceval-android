@@ -13,15 +13,28 @@
         tools:context=".ui.login.RegisterActivity">
 
         <TextView
-            android:id="@+id/registerPromptField"
+            android:id="@+id/registerEmoji"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="@string/register_prompt"
-            android:textSize="20sp"
+            android:text="@string/cat_love_emoji"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="34sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/registerPromptField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/register_prompt"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/registerEmoji" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -102,5 +115,6 @@
                 android:layout_weight="1"
                 android:text="@string/register" />
         </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

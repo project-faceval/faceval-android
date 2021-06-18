@@ -3,97 +3,93 @@ package com.chardon.faceval.android.rest.client
 import com.chardon.faceval.entity.*
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
-import retrofit2.Call
+import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import retrofit2.http.*
 
-private const val BASE_URL = "http://127.0.0.1:9988/"
+private const val BASE_URL = "http://47.109.80.112:9988/"
 
-object ObjectMapperFactory {
+object ConverterFactoryFactory {
 
-    fun getObjectMapper(): ObjectMapper {
-        val newObjectMapper = ObjectMapper()
+    fun getConverterFactory(): Converter.Factory {
+        val newObjectMapper = jacksonObjectMapper()
         newObjectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
 
-        return newObjectMapper
+        return JacksonConverterFactory.create(newObjectMapper)
     }
 }
 
 private val retrofit = Retrofit.Builder()
 //    .addConverterFactory(MoshiConverterFactory.create())
-    .addConverterFactory(JacksonConverterFactory.create(ObjectMapperFactory.getObjectMapper()))
-//    .addCallAdapterFactory(CoroutineCallAdapterFactory())
+    .addConverterFactory(ConverterFactoryFactory.getConverterFactory())
+    .addCallAdapterFactory(CoroutineCallAdapterFactory())
     .baseUrl(BASE_URL)
     .build()
 
 interface UserClient {
 
     @GET("/user")
-    fun getUser(@Query("username") userName: String): Call<UserInfo>
+    fun getUserAsync(@Query("username") userName: String): Deferred<UserInfo>
 
     @FormUrlEncoded
     @POST("/user")
-    fun createUser(@Body user: UserInfoUpload): Call<UserInfo>
+    fun createUserAsync(@Body user: UserInfoUpload): Deferred<UserInfo>
 
     @PUT("/user")
-    fun updateUser(@Body user: UserInfoUpload): Call<UserInfo>
+    fun updateUserAsync(@Body user: UserInfoUpload): Deferred<UserInfo>
 
     @DELETE("/user")
-    fun deleteUser(@Query("username") userName: String,
-                   @Query("password") password: String): Call<Map<String, String>>
+    fun deleteUserAsync(@Query("username") userName: String,
+                        @Query("password") password: String): Deferred<Map<String, String>>
 
     @PATCH("/user")
-    fun updatePassword(@Query("username") userName: String,
-                       @Query("password") oldPassword: String,
-                       @Query("new_password") newPassword: String): Call<Map<String, String>>
+    fun updatePasswordAsync(@Query("username") userName: String,
+                            @Query("password") oldPassword: String,
+                            @Query("new_password") newPassword: String): Deferred<Map<String, String>>
 
+    @FormUrlEncoded
     @POST("/login")
-    fun login(@Field("username") userName: String,
-              @Field("password") password: String): Call<UserInfo>
+    fun loginAsync(@Field("username") userName: String,
+                   @Field("password") password: String): Deferred<UserInfo>
 }
 
 interface PhotoClient {
 
-    @GET("/photo/{photo_id}/{user_id}")
-    fun getPhotos(@Path("photo_id") photoId: Long,
-                  @Path("user_id") userName: String): Call<List<PhotoInfo>>
+    @GET("/photo")
+    fun getPhotosAsync(@Path("photo_id") photoId: Long,
+                       @Path("user_id") userName: String): Deferred<List<PhotoInfo>>
 
-    @Multipart
     @FormUrlEncoded
     @POST("/photo")
-    fun addPhoto(@Body newPhoto: PhotoInfoUpload<MultipartBody.Part>): Call<PhotoInfo>
+    fun addPhotoAsync(@Body newPhoto: PhotoInfoUploadBase64): Deferred<PhotoInfo>
 
     @PUT("/photo")
-    fun updatePhotoInfo(@Body newPhotoInfo: PhotoInfoUpdate): Call<PhotoInfo>
+    fun updatePhotoInfoAsync(@Body newPhotoInfo: PhotoInfoUpdate): Deferred<PhotoInfo>
 
     @DELETE("/photo")
-    fun deletePhoto(@Query("id") userName: String,
-                    @Query("password") password: String,
-                    @Query("photo_id") photoId: Long): Call<Map<String, String>>
+    fun deletePhotoAsync(@Query("id") userName: String,
+                         @Query("password") password: String,
+                         @Query("photo_id") photoId: Long): Deferred<Map<String, String>>
 }
 
 interface AIClient {
 
-    @Multipart
     @FormUrlEncoded
     @POST("/eval")
-    fun score(@Field("ext") extension: String,
-              @Part("bimg") image: MultipartBody.Part): Call<List<Double>>
+    fun scoreAsync(@Body scoring: ScoringModelBase64): Deferred<List<Double>>
 
-    @Multipart
     @FormUrlEncoded
     @POST("/eval/detect")
-    fun detect(@Field("ext") extension: String,
-               @Part("bimg") image: MultipartBody.Part): Call<DetectionResult>
+    fun detectAsync(@Body detection: DetectionModelBase64): Deferred<DetectionResult>
 
-    @Multipart
     @FormUrlEncoded
     @POST("/eval/scoring")
-    fun scoreDetected(@Field("ext") extension: String,
-                      @Part("bimg") image: MultipartBody.Part,
-                      @Body detectionResult: DetectionResult): Call<List<Double>>
+    fun scoreDetectedAsync(@Body scoring: ScoringModelBase64): Deferred<List<Double>>
 }
 
 object APISet {

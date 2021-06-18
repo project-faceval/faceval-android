@@ -1,5 +1,7 @@
 package com.chardon.faceval.android.ui.profile
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -32,8 +34,6 @@ class ProfileFragment : Fragment() {
 
     private lateinit var profileViewModel: ProfileViewModel
 
-    private lateinit var userDao: UserDao
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,7 +44,7 @@ class ProfileFragment : Fragment() {
 
         val application = requireActivity().application
 
-        userDao = UserDatabase.getInstance(application).userDao
+        val userDao = UserDatabase.getInstance(application).userDao
 
         val provider = ViewModelProvider(this)
         val loginViewModelProvider = ViewModelProvider(
@@ -94,8 +94,13 @@ class ProfileFragment : Fragment() {
             }
 
             logoutButton.setOnClickListener {
-                loginViewModel?.loginRepository?.logout()
-                loginPrompt.isGone = false
+                AlertDialog.Builder(requireActivity())
+                    .setPositiveButton(R.string.confirm) { _, _ ->
+                        loginViewModel?.loginRepository?.logout()
+                        loginPrompt.isGone = false
+                    }
+                    .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                    .show()
             }
         }
 

@@ -1,19 +1,17 @@
 package com.chardon.faceval.android.ui.login
 
 import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.AndroidViewModel
-import androidx.room.Room
-import com.chardon.faceval.android.data.LoginRepository
-import com.chardon.faceval.android.data.Result
-
 import com.chardon.faceval.android.R
 import com.chardon.faceval.android.data.LoginDataSource
-import com.chardon.faceval.android.data.UserDatabase
+import com.chardon.faceval.android.data.LoginRepository
+import com.chardon.faceval.android.data.Result
 import com.chardon.faceval.android.data.dao.UserDao
 import com.chardon.faceval.entity.UserInfo
 import kotlinx.coroutines.*
+import java.util.regex.Pattern
 
 class LoginViewModel(private val userDao: UserDao,
                      application: Application) : AndroidViewModel(application) {
@@ -33,42 +31,45 @@ class LoginViewModel(private val userDao: UserDao,
     private val loginDataSource: LoginDataSource = LoginDataSource(userDao)
 
     private val _loginRepository: LoginRepository = LoginRepository(loginDataSource)
-    val loginRepository: LoginRepository
-        get() = _loginRepository
+    val loginRepository: LoginRepository = _loginRepository
 
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
     }
 
-    private suspend fun loginAsync(username: String, password: String): Result<UserInfo> {
-        return withContext(Dispatchers.IO) {
-            _loginRepository.login(username, password)
+    fun login(username: String, password: String) {
+        // can be launched in a separate asynchronous job
+        _loginRepository.isInitialized.apply {
+            if (value == true) {
+                executeLogin(username, password)
+            } else {
+                observe(getApplication()) { value ->
+                    if (value) {
+                        executeLogin(username, password)
+                        removeObserver(getApplication())
+                    }
+                }
+            }
         }
     }
 
-    fun login(username: String, password: String) {
-        // can be launched in a separate asynchronous job
-        _loginRepository.isInitialized.observe(getApplication()) {
-            uiScope.launch {
-                if (it) {
-                    val result = loginAsync(username, password)
+    private fun executeLogin(username: String, password: String) {
+        uiScope.launch {
+            val result = _loginRepository.login(username, password)
 
-                    if (result is Result.Success) {
-                        val view = LoggedInUserView(
-                            displayName = result.data.displayName,
-                            email = result.data.email,
-                            gender = result.data.gender,
-                            status = result.data.status,
-                            userId = result.data.id,
-                        )
+            if (result is Result.Success) {
+                val view = LoggedInUserView(
+                    displayName = result.data.displayName,
+                    email = result.data.email,
+                    gender = result.data.gender,
+                    status = result.data.status,
+                    userId = result.data.id,
+                )
 
-                        _loginResult.value =
-                            LoginResult(success = view)
-                    } else {
-                        _loginResult.value = LoginResult(error = R.string.login_failed)
-                    }
-                }
+                _loginResult.value = LoginResult(success = view)
+            } else {
+                _loginResult.value = LoginResult(error = R.string.login_failed)
             }
         }
     }
@@ -83,9 +84,11 @@ class LoginViewModel(private val userDao: UserDao,
         }
     }
 
+    fun logout() = _loginRepository.logout()
+
     // A placeholder username validation check
     private fun isUserNameValid(username: String): Boolean {
-        return true
+        return Pattern.matches("^[^\\s]+$", username)
     }
 
     // A placeholder password validation check

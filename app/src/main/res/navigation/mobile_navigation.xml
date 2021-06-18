@@ -9,7 +9,14 @@
         android:id="@+id/navigation_home"
         android:name="com.chardon.faceval.android.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_profile"
+            app:destination="@id/navigation_profile" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_dashboard"
+            app:destination="@id/navigation_dashboard" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.chardon.faceval.android.ui.profile.ProfileFragment"
@@ -21,12 +28,19 @@
         <action
             android:id="@+id/action_navigation_profile_to_settingsActivity2"
             app:destination="@id/navigation_settings" />
+        <action
+            android:id="@+id/action_navigation_profile_to_navigation_home"
+            app:destination="@id/navigation_home" />
     </fragment>
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.chardon.faceval.android.ui.dashboard.DashboardFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_dashboard" >
+        <action
+            android:id="@+id/action_navigation_dashboard_to_navigation_profile"
+            app:destination="@id/navigation_profile" />
+    </fragment>
     <activity
         android:id="@+id/navigation_login"
         android:name="com.chardon.faceval.android.ui.login.LoginActivity"

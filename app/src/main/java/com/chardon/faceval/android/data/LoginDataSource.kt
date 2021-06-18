@@ -18,14 +18,11 @@ class LoginDataSource(private val userDao: UserDao) {
 
     private val userClient = APISet.userClient
 
-    fun login(username: String, password: String): Result<UserInfo> {
+    suspend fun login(username: String, password: String): Result<UserInfo> {
         try {
-            val retrieveRes = userClient.login(username, password).execute()
-            if (!retrieveRes.isSuccessful) {
-                throw LoginFailedException()
-            }
+            val deferredJob = userClient.loginAsync(username, password)
 
-            val userInfo = retrieveRes.body() ?: throw Exception("Cannot get user's information")
+            val userInfo = deferredJob.await()
 
             userDao.insert(
                 User(
