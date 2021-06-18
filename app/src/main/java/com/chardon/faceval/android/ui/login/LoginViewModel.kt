@@ -10,7 +10,6 @@ import com.chardon.faceval.android.data.LoginRepository
 import com.chardon.faceval.android.data.Result
 import com.chardon.faceval.android.data.dao.UserDao
 import com.chardon.faceval.android.util.Action
-import com.chardon.faceval.entity.UserInfo
 import kotlinx.coroutines.*
 import java.util.regex.Pattern
 
@@ -83,11 +82,18 @@ class LoginViewModel(private val userDao: UserDao,
         }
     }
 
+    private fun resetLoginResult() {
+        _loginResult.value = null
+    }
+
     fun logout(callback: Action = Action {  }) {
         val logoutJob = Job()
         val logoutAsyncScope = CoroutineScope(Dispatchers.Main + logoutJob)
 
-        logoutJob.invokeOnCompletion { callback.invoke() }
+        logoutJob.invokeOnCompletion {
+            resetLoginResult()
+            callback.invoke()
+        }
 
         logoutAsyncScope.launch {
             _loginRepository.logout()

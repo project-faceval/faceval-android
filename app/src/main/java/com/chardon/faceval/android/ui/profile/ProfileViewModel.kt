@@ -19,9 +19,17 @@ class ProfileViewModel : ViewModel() {
     private val _gender = MutableLiveData<Boolean?>()
     val gender: LiveData<Boolean?> = _gender
 
+    private var requestCode: Int = 0
+
     fun setUser(userInfo: UserInfo) {
         _displayName.value = userInfo.displayName
         _userName.value = userInfo.id
         _gender.value = userInfo.gender
+    }
+
+    fun useRequestCode(): Int {
+        synchronized(requestCode) {
+            return requestCode++
+        }
     }
 }

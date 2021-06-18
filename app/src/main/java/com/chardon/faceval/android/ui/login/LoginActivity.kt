@@ -127,7 +127,7 @@ class LoginActivity : AppCompatActivity() {
 
         registerButton.setOnClickListener {
             val intent = Intent(applicationContext, RegisterActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, 0)
 
             if (!((intent.extras?.get("canceled") ?: true) as Boolean)) {
                 binding.username.setText(

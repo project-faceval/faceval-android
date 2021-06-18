@@ -86,17 +86,19 @@ class ProfileFragment : Fragment() {
                     )
                 )
 
-                val localJob = Job()
-                val localScope = CoroutineScope(Dispatchers.Main + localJob)
+                refreshUI()
 
-                localJob.invokeOnCompletion {
-                    refreshUI()
-                }
-
-                localScope.launch {
-                    loginViewModel?.loginRepository?.refreshAsync()
-                    localJob.complete()
-                }
+//                val localJob = Job()
+//                val localScope = CoroutineScope(Dispatchers.Main + localJob)
+//
+//                localJob.invokeOnCompletion {
+//                    refreshUI()
+//                }
+//
+//                localScope.launch {
+//                    loginViewModel?.loginRepository?.refreshAsync()
+//                    localJob.complete()
+//                }
             }
 
             logoutButton.setOnClickListener {
