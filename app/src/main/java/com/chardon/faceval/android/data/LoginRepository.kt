@@ -60,7 +60,9 @@ class LoginRepository(private val dataSource: LoginDataSource,
 
         asyncInitScope.launch {
             refreshAsync()
-            initJob.complete()
+            synchronized(initJob) {
+                initJob.complete()
+            }
         }
     }
 
