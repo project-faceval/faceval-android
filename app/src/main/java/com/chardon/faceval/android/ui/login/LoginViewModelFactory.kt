@@ -13,19 +13,20 @@ import com.chardon.faceval.android.data.dao.UserDao
  */
 class LoginViewModelFactory(private val userDao: UserDao,
                             private val application: Application) : ViewModelProvider.Factory {
-    companion object {
+    companion object Store {
         var viewModel: LoginViewModel? = null
     }
 
     @Suppress("UNCHECKED_CAST")
-    @Synchronized
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
-            if (viewModel == null) {
-                viewModel = LoginViewModel(userDao, application)
-            }
+            synchronized(Store) {
+                if (viewModel == null) {
+                    viewModel = LoginViewModel(userDao, application)
+                }
 
-            return viewModel as T
+                return viewModel as T
+            }
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
