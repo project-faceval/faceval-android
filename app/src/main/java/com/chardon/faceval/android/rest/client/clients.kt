@@ -28,12 +28,14 @@ interface UserClient {
     @GET("/user/{username}")
     fun getUserAsync(@Path("username") userName: String): Deferred<UserInfo>
 
+    // Model: UserInfoUpload
     @FormUrlEncoded
     @POST("/user")
     fun createUserAsync(@FieldMap user: Map<String, String>): Deferred<UserInfo>
 
+    // Model: UserInfoUpload
     @PUT("/user")
-    fun updateUserAsync(@Body user: UserInfoUpload): Deferred<UserInfo>
+    fun updateUserAsync(@FieldMap user: Map<String, String>): Deferred<UserInfo>
 
     @DELETE("/user")
     fun deleteUserAsync(@Query("username") userName: String,
@@ -56,9 +58,10 @@ interface PhotoClient {
     fun getPhotosAsync(@Path("photo_id") photoId: Long,
                        @Path("user_id") userName: String): Deferred<List<PhotoInfo>>
 
+    // Model: PhotoInfoUploadBase64
     @FormUrlEncoded
     @POST("/photo")
-    fun addPhotoAsync(@Body newPhoto: PhotoInfoUploadBase64): Deferred<PhotoInfo>
+    fun addPhotoAsync(@FieldMap newPhoto: Map<String, String>): Deferred<PhotoInfo>
 
     @PUT("/photo")
     fun updatePhotoInfoAsync(@Body newPhotoInfo: PhotoInfoUpdate): Deferred<PhotoInfo>

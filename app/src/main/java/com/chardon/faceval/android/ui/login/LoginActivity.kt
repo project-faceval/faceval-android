@@ -1,6 +1,7 @@
 package com.chardon.faceval.android.ui.login
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -12,9 +13,11 @@ import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.FragmentContainerView
 import androidx.room.Room
 import com.chardon.faceval.android.databinding.ActivityLoginBinding
 
@@ -114,19 +117,14 @@ class LoginActivity : AppCompatActivity() {
 
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
-                    EditorInfo.IME_ACTION_DONE ->
-                        loginViewModel.login(
-                            username.text.toString(),
-                            password.text.toString()
-                        )
+                    EditorInfo.IME_ACTION_DONE -> login(loading, username, password)
                 }
                 false
             }
         }
 
         login.setOnClickListener {
-            loading.visibility = View.VISIBLE
-            loginViewModel.login(username.text.toString(), password.text.toString())
+            login(loading, username, password)
         }
 
         binding.cancelButton.setOnClickListener {
@@ -138,6 +136,15 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(applicationContext, RegisterActivity::class.java)
             startActivityForResult(intent, CALL_REGISTER)
         }
+    }
+
+    private fun login(
+        loading: FragmentContainerView,
+        username: EditText,
+        password: EditText
+    ) {
+        loading.visibility = View.VISIBLE
+        loginViewModel.login(username.text.toString(), password.text.toString())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -3,6 +3,7 @@ package com.chardon.faceval.android.util
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import com.chardon.faceval.entity.PhotoInfoUploadBase64
 import com.chardon.faceval.entity.UserInfoUpload
 
 object Extensions {
@@ -30,6 +31,20 @@ object Extensions {
             "gender" to if (gender == null) "" else gender.toString(),
             "password" to password,
             "status" to (status ?: ""),
+        )
+    }
+
+    fun PhotoInfoUploadBase64.toMap(): Map<String, String> {
+        return mapOf(
+            "id" to id,  // User Name
+            "password" to password,
+            "image" to image,
+            "ext" to ext,
+            "useBase64" to useBase64,
+            "score" to score.toString(),
+            "title" to (title ?: ""),
+            "description" to (description ?: ""),
+            "positions" to positions,
         )
     }
 }

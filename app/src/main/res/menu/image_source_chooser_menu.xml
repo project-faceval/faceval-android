@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/takePictureMenuItem"
+        android:icon="@drawable/ic_baseline_camera_24"
+        android:title="@string/take_picture_prompt" />
+    <item
+        android:id="@+id/pickGalleryMenuItem"
+        android:icon="@drawable/ic_baseline_image_search_24"
+        android:title="@string/pick_from_gallery_prompt" />
+</menu>

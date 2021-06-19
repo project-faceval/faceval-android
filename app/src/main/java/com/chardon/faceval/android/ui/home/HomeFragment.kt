@@ -1,11 +1,13 @@
 package com.chardon.faceval.android.ui.home
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.AdapterView
+import androidx.camera.core.ImageCapture
 import androidx.core.view.isGone
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -17,6 +19,7 @@ import com.chardon.faceval.android.databinding.FragmentHomeBinding
 import com.chardon.faceval.android.ui.login.LoginViewModel
 import com.chardon.faceval.android.ui.login.LoginViewModelFactory
 import com.chardon.faceval.android.ui.scoring.ScoringActivity
+import com.chardon.faceval.android.ui.shutter.ShutterActivity
 
 class HomeFragment : Fragment() {
     companion object {
@@ -59,26 +62,48 @@ class HomeFragment : Fragment() {
         }
 
         binding.getStartedButton.setOnClickListener {
-            val intent = Intent()
-            intent.type = "image/*"
-            intent.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(Intent.createChooser(intent, "Select a picture"), PICK_IMAGE)
+            AlertDialog.Builder(requireActivity())
+                .setTitle(R.string.image_source_select)
+                .setItems(R.array.image_methods) { _, which ->
+                    when (which) {
+                        0 -> callCamera()
+                        1 -> pickLocalImage()
+                        else -> {}
+                    }
+                }
+                .show()
         }
 
         return binding.root
     }
 
+    private fun callCamera() {
+        val intent = Intent(requireActivity().applicationContext, ShutterActivity::class.java)
+        startActivityForResult(intent, CALL_CAMERA)
+    }
+
+    private fun pickLocalImage() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Select a picture"), PICK_IMAGE)
+    }
+
+    private fun callScoring(image: Bitmap) {
+
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
+            CALL_CAMERA -> {
+
+            }
             PICK_IMAGE -> {
                 if (resultCode != Activity.RESULT_OK) {
                     return
                 }
 
-                val extras = data?.extras ?: return
 
-                // TODO: 2021-6-19: CameraX call
-//            activateShutter(extras.getString("source"))
             }
             CALL_SCORE -> {
 
@@ -86,6 +111,30 @@ class HomeFragment : Fragment() {
             else -> {}
         }
     }
+//
+//    override fun onCreateContextMenu(
+//        menu: ContextMenu,
+//        v: View,
+//        menuInfo: ContextMenu.ContextMenuInfo?
+//    ) {
+//        super.onCreateContextMenu(menu, v, menuInfo)
+//        val inflater: MenuInflater = requireActivity().menuInflater
+//        inflater.inflate(R.menu.image_source_chooser_menu, menu)
+//    }
+//
+//    override fun onContextItemSelected(item: MenuItem): Boolean {
+//        return when (item.itemId) {
+//            R.id.takePictureMenuItem -> {
+//                // TODO: Call camerax
+//                true
+//            }
+//            R.id.pickGalleryMenuItem -> {
+//                // TODO: Call image picker
+//                true
+//            }
+//            else -> super.onContextItemSelected(item)
+//        }
+//    }
 
     override fun onResume() {
         super.onResume()

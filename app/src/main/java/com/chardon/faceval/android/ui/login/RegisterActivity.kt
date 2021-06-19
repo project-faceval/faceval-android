@@ -4,6 +4,8 @@ import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.StringRes
@@ -129,22 +131,35 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         binding.registerActionButton.setOnClickListener {
-            binding.apply {
-                viewModel.register(
-                    UserInfoUpload(
-                        id = userIdEntry.text.toString(),
-                        password = passwordEntry.text.toString(),
-                        email = emailEntry.text.toString(),
-                        displayName = displayNameEntry.text.toString(),
-                        status = null,
-                        gender = null,
-                    )
-                )
+            register()
+        }
+
+        binding.passwordConfirmEntry.setOnEditorActionListener { _, actionId, _ ->
+            when (actionId) {
+                EditorInfo.IME_ACTION_DONE -> register()
             }
+            false
+        }
+    }
+
+    private fun register() {
+        binding.apply {
+            loading.visibility = View.VISIBLE
+            viewModel.register(
+                UserInfoUpload(
+                    id = userIdEntry.text.toString(),
+                    password = passwordEntry.text.toString(),
+                    email = emailEntry.text.toString(),
+                    displayName = displayNameEntry.text.toString(),
+                    status = null,
+                    gender = null,
+                )
+            )
         }
     }
 
     private fun updateUiWithUser(username: String, password: String) {
+        binding.loading.visibility = View.GONE
         Toast.makeText(
             applicationContext,
             "Register succeed",

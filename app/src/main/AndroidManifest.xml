@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.chardon.faceval.android">
 
-    <uses-feature android:name="android.hardware.camera2" />
+    <uses-feature android:name="android.hardware.camera.any" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -17,7 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FacevalAndroid"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.shutter.ShutterActivity"></activity>
+        <activity android:name=".ui.shutter.ShutterActivity"
+            android:label="@string/title_take_photo"
+            android:theme="@style/Theme.FacevalAndroid"/>
         <activity
             android:name=".ui.login.RegisterActivity"
             android:label="@string/register" />
