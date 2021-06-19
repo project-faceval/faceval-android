@@ -21,9 +21,13 @@ import com.chardon.faceval.android.databinding.ActivityLoginBinding
 import com.chardon.faceval.android.R
 import com.chardon.faceval.android.data.UserDatabase
 import com.chardon.faceval.android.data.dao.UserDao
+import com.chardon.faceval.android.util.Extensions.afterTextChanged
 import java.util.*
 
 class LoginActivity : AppCompatActivity() {
+    companion object {
+        private const val CALL_REGISTER = 0
+    }
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
@@ -63,8 +67,8 @@ class LoginActivity : AppCompatActivity() {
         binding.loginViewModel = loginViewModel
         binding.lifecycleOwner = this
 
-        loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
-            val loginState = it ?: return@Observer
+        loginViewModel.loginFormState.observe(this@LoginActivity) {
+            val loginState = it ?: return@observe
 
             // disable login button unless both username / password is valid
             login.isEnabled = loginState.isDataValid
@@ -75,23 +79,23 @@ class LoginActivity : AppCompatActivity() {
             if (loginState.passwordError != null) {
                 password.error = getString(loginState.passwordError)
             }
-        })
+        }
 
-        loginViewModel.loginResult.observe(this@LoginActivity, Observer {
-            val loginResult = it ?: return@Observer
+        loginViewModel.loginResult.observe(this@LoginActivity) {
+            val loginResult = it ?: return@observe
 
             loading.visibility = View.GONE
             if (loginResult.error != null) {
                 showLoginFailed(loginResult.error)
-            }
-            if (loginResult.success != null) {
+            } else if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
             }
+
             setResult(Activity.RESULT_OK)
 
             //Complete and destroy login activity once successful
             finish()
-        })
+        }
 
         username.afterTextChanged {
             loginViewModel.loginDataChanged(
@@ -125,22 +129,36 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.login(username.text.toString(), password.text.toString())
         }
 
+        binding.cancelButton.setOnClickListener {
+            setResult(Activity.RESULT_CANCELED)
+            finish()
+        }
+
         registerButton.setOnClickListener {
             val intent = Intent(applicationContext, RegisterActivity::class.java)
-            startActivityForResult(intent, 0)
+            startActivityForResult(intent, CALL_REGISTER)
+        }
+    }
 
-            if (!((intent.extras?.get("canceled") ?: true) as Boolean)) {
-                binding.username.setText(
-                    intent.extras?.get("username") as String,
-                    TextView.BufferType.EDITABLE
-                )
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            CALL_REGISTER -> {
+                val extras = data?.extras ?: return
 
-                binding.password.setText(
-                    intent.extras?.get("password") as String,
-                    TextView.BufferType.EDITABLE
-                )
+                if (extras.get("canceled") != true) {
+                    binding.username.setText(
+                        extras.get("username") as String,
+                        TextView.BufferType.EDITABLE
+                    )
 
-                binding.login.performClick()
+                    binding.password.setText(
+                        extras.get("password") as String,
+                        TextView.BufferType.EDITABLE
+                    )
+
+//                binding.login.performClick()
+                }
             }
         }
     }
@@ -164,19 +182,4 @@ class LoginActivity : AppCompatActivity() {
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
-}
-
-/**
- * Extension function to simplify setting an afterTextChanged action to EditText components.
- */
-fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-    this.addTextChangedListener(object : TextWatcher {
-        override fun afterTextChanged(editable: Editable?) {
-            afterTextChanged.invoke(editable.toString())
-        }
-
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-    })
 }

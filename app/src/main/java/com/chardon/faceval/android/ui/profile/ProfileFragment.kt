@@ -21,6 +21,10 @@ import kotlinx.coroutines.*
 import java.util.*
 
 class ProfileFragment : Fragment() {
+    companion object {
+        private const val CALL_LOGIN = 0
+        private const val CALL_SETTINGS = 1
+    }
 
     private lateinit var binding: FragmentProfileBinding
 
@@ -67,15 +71,35 @@ class ProfileFragment : Fragment() {
             loginButton.setOnClickListener {
                 val intent = Intent(requireActivity().applicationContext, LoginActivity::class.java)
 
-                startActivityForResult(intent, 0)
+                startActivityForResult(intent, CALL_LOGIN)
+            }
 
-                val extras = intent.extras ?: return@setOnClickListener
+            logoutButton.setOnClickListener {
+                AlertDialog.Builder(requireActivity())
+                    .setTitle(R.string.logout_confirm_title)
+                    .setPositiveButton(R.string.confirm) { _, _ ->
+                        loginViewModel?.logout {
+                            loginPrompt.isGone = false
+                        }
+                    }
+                    .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                    .show()
+            }
+        }
+
+        return binding.root
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            CALL_LOGIN -> {
+                val extras = data?.extras ?: return
 
                 if ((extras["loggedin"] as Boolean?) != true) {
-                    return@setOnClickListener
+                    return
                 }
 
-                profileViewModel?.setUser(
+                profileViewModel.setUser(
                     UserInfo(
                         id = extras["username"] as String,
                         displayName = extras["display_name"] as String,
@@ -100,21 +124,7 @@ class ProfileFragment : Fragment() {
 //                    localJob.complete()
 //                }
             }
-
-            logoutButton.setOnClickListener {
-                AlertDialog.Builder(requireActivity())
-                    .setTitle(R.string.logout_confirm_title)
-                    .setPositiveButton(R.string.confirm) { _, _ ->
-                        loginViewModel?.logout {
-                            loginPrompt.isGone = false
-                        }
-                    }
-                    .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                    .show()
-            }
         }
-
-        return binding.root
     }
 
     override fun onResume() {

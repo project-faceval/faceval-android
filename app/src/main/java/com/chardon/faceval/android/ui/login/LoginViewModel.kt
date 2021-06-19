@@ -10,8 +10,8 @@ import com.chardon.faceval.android.data.LoginRepository
 import com.chardon.faceval.android.data.Result
 import com.chardon.faceval.android.data.dao.UserDao
 import com.chardon.faceval.android.util.Action
+import com.chardon.faceval.android.util.FieldChecker
 import kotlinx.coroutines.*
-import java.util.regex.Pattern
 
 class LoginViewModel(private val userDao: UserDao,
                      application: Application) : AndroidViewModel(application) {
@@ -103,12 +103,8 @@ class LoginViewModel(private val userDao: UserDao,
     }
 
     // A placeholder username validation check
-    private fun isUserNameValid(username: String): Boolean {
-        return Pattern.matches("^[^\\s]+$", username)
-    }
+    private fun isUserNameValid(username: String): Boolean = FieldChecker.username(username)
 
     // A placeholder password validation check
-    private fun isPasswordValid(password: String): Boolean {
-        return password.length > 5
-    }
+    private fun isPasswordValid(password: String): Boolean = FieldChecker.password(password)
 }
