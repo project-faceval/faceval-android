@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
@@ -17,7 +16,6 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.util.Consumer
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.chardon.faceval.android.R
@@ -29,7 +27,6 @@ import com.chardon.faceval.android.util.NotificationUtil.setGravity
 import com.google.android.material.snackbar.Snackbar
 import com.google.common.util.concurrent.ListenableFuture
 import java.io.ByteArrayOutputStream
-import java.util.concurrent.Executor
 
 class ShutterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityShutterBinding
@@ -92,14 +89,13 @@ class ShutterActivity : AppCompatActivity() {
 
                     override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                         val byteArray = it.toByteArray()
-                        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
 
                         Toast.makeText(applicationContext, R.string.capture_success, Toast.LENGTH_LONG)
                              .show()
 
-                        intent.putExtra("bitmap", bitmap)
-                        setResult(Activity.RESULT_OK)
-                        finish()
+                        endActivity {
+                            intent.putExtra("image", byteArray)
+                        }
                     }
             })
         }
@@ -167,7 +163,7 @@ class ShutterActivity : AppCompatActivity() {
                 }
 
                 if (!cameraExists) {
-                    endActivity {
+                    endActivity(RESULT_CANCELED) {
                         Toast.makeText(
                             applicationContext,
                             R.string.camera_not_exists,
@@ -240,7 +236,7 @@ class ShutterActivity : AppCompatActivity() {
         when (requestCode) {
             0 -> {
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    endActivity(Activity.RESULT_CANCELED) {
+                    endActivity(RESULT_CANCELED) {
                         Toast.makeText(applicationContext,
                             R.string.camera_no_permission,
                             Toast.LENGTH_LONG

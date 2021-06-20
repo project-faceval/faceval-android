@@ -1,13 +1,14 @@
 package com.chardon.faceval.android.ui.home
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.*
-import android.widget.AdapterView
-import androidx.camera.core.ImageCapture
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -20,6 +21,9 @@ import com.chardon.faceval.android.ui.login.LoginViewModel
 import com.chardon.faceval.android.ui.login.LoginViewModelFactory
 import com.chardon.faceval.android.ui.scoring.ScoringActivity
 import com.chardon.faceval.android.ui.shutter.ShutterActivity
+import com.chardon.faceval.android.util.BitmapUtil.toBitmap
+import com.chardon.faceval.android.util.NotificationUtil.darkPurple
+import com.google.android.material.snackbar.Snackbar
 
 class HomeFragment : Fragment() {
     companion object {
@@ -86,30 +90,68 @@ class HomeFragment : Fragment() {
         val intent = Intent()
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(Intent.createChooser(intent, "Select a picture"), PICK_IMAGE)
+
+        val chooser = Intent.createChooser(intent, getString(R.string.select_photo))
+        startActivityForResult(chooser, PICK_IMAGE)
     }
 
     private fun callScoring(image: Bitmap) {
-
+        val intent = Intent(requireActivity().applicationContext, ScoringActivity::class.java)
+        intent.putExtra("bitmap", image)
+        startActivityForResult(intent, CALL_SCORE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             CALL_CAMERA -> {
+                if (resultCode != Activity.RESULT_OK) {
+                    return
+                }
 
+                val image = data?.getByteArrayExtra("image")
+
+                if (image == null) {
+                    imageLoadFailedNotification()
+                    return
+                }
+
+                callScoring(image.toBitmap())
             }
             PICK_IMAGE -> {
                 if (resultCode != Activity.RESULT_OK) {
                     return
                 }
 
+                if (data?.data == null) {
+                    imageLoadFailedNotification()
+                    return
+                }
 
+                val bitmap: Bitmap?
+
+                context?.contentResolver?.openInputStream(data.data!!).use {
+                    bitmap = it?.toBitmap()
+                }
+
+                if (bitmap == null) {
+                    imageLoadFailedNotification()
+                    return
+                }
+
+                callScoring(bitmap)
             }
             CALL_SCORE -> {
 
             }
             else -> {}
         }
+    }
+
+    @SuppressLint("ShowToast")
+    private fun imageLoadFailedNotification() {
+        Snackbar.make(requireView(), R.string.image_load_failed, Snackbar.LENGTH_LONG)
+            .darkPurple()
+            .show()
     }
 //
 //    override fun onCreateContextMenu(

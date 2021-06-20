@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.chardon.faceval.android.util.LenFacing
-import java.util.function.Consumer
 
 class ShutterViewModel : ViewModel() {
     val selectorMap = mapOf(

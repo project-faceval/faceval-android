@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.chardon.faceval.android">
 
     <uses-feature android:name="android.hardware.camera.any" />
@@ -19,7 +20,10 @@
         android:usesCleartextTraffic="true">
         <activity android:name=".ui.shutter.ShutterActivity"
             android:label="@string/title_take_photo"
-            android:theme="@style/Theme.FacevalAndroid"/>
+            android:theme="@style/Theme.FacevalAndroid"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".ui.login.RegisterActivity"
             android:label="@string/register" />
