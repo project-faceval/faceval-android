@@ -6,7 +6,7 @@ import android.widget.EditText
 import com.chardon.faceval.entity.PhotoInfoUploadBase64
 import com.chardon.faceval.entity.UserInfoUpload
 
-object Extensions {
+object MiscExtensions {
 
     /**
      * Extension function to simplify setting an afterTextChanged action to EditText components.

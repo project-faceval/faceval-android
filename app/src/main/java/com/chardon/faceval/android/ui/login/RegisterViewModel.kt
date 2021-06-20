@@ -7,7 +7,7 @@ import com.chardon.faceval.android.R
 import com.chardon.faceval.android.rest.client.APISet
 import com.chardon.faceval.android.rest.client.UserClient
 import com.chardon.faceval.android.util.Action
-import com.chardon.faceval.android.util.Extensions.toMap
+import com.chardon.faceval.android.util.MiscExtensions.toMap
 import com.chardon.faceval.android.util.FieldChecker
 import com.chardon.faceval.entity.UserInfoUpload
 import kotlinx.coroutines.*

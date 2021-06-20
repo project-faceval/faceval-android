@@ -6,19 +6,14 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.StringRes
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.chardon.faceval.android.R
 import com.chardon.faceval.android.databinding.ActivityRegisterBinding
-import com.chardon.faceval.android.util.Extensions.afterTextChanged
-import com.chardon.faceval.entity.UserInfo
+import com.chardon.faceval.android.util.MiscExtensions.afterTextChanged
 import com.chardon.faceval.entity.UserInfoUpload
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
 

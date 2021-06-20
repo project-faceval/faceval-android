@@ -94,6 +94,14 @@
     <string name="image_source_select">Select where to get an image</string>
     <string name="capture">Capture</string>
 
-    <string name="camera_switch_to_front">Back</string>
-    <string name="camera_switch_to_back">Front</string>
+    <string name="camera_switch_to_front">Switch</string>
+    <string name="camera_switch_to_back">Switch</string>
+    <string name="camera_no_permission">Faceval Camera cannot work properly: no permission</string>
+    <string name="camera_not_exists">Your phone has no cameras!</string>
+    <string name="camera_load_failed">Cannot load camera</string>
+    <string name="capture_failed">Image capture failed</string>
+    <string name="capture_success">Image captured successfully</string>
+    <string name="current_len_facing">%s camera is currently used</string>
+    <string name="camera_front">Front</string>
+    <string name="camera_back">Back</string>
 </resources>

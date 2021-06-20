@@ -1,30 +1,24 @@
 package com.chardon.faceval.android.ui.login
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.FragmentContainerView
-import androidx.room.Room
 import com.chardon.faceval.android.databinding.ActivityLoginBinding
 
 import com.chardon.faceval.android.R
 import com.chardon.faceval.android.data.UserDatabase
 import com.chardon.faceval.android.data.dao.UserDao
-import com.chardon.faceval.android.util.Extensions.afterTextChanged
+import com.chardon.faceval.android.util.MiscExtensions.afterTextChanged
 import java.util.*
 
 class LoginActivity : AppCompatActivity() {

@@ -1,11 +1,15 @@
 package com.chardon.faceval.android.ui.shutter
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -13,17 +17,21 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.util.Consumer
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.chardon.faceval.android.R
 import com.chardon.faceval.android.databinding.ActivityShutterBinding
+import com.chardon.faceval.android.util.Action
+import com.chardon.faceval.android.util.LenFacing
+import com.chardon.faceval.android.util.NotificationUtil.darkPurple
+import com.chardon.faceval.android.util.NotificationUtil.setGravity
 import com.google.android.material.snackbar.Snackbar
 import com.google.common.util.concurrent.ListenableFuture
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.Executor
 
 class ShutterActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityShutterBinding
 
     private lateinit var shutterViewModel: ShutterViewModel
@@ -34,6 +42,12 @@ class ShutterActivity : AppCompatActivity() {
 
     private var permissionRequested = false
 
+    private var notAllSupported = false
+
+    private lateinit var currentLenFacingString: String
+    private lateinit var frontString: String
+    private lateinit var backString: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_shutter)
@@ -42,51 +56,11 @@ class ShutterActivity : AppCompatActivity() {
         binding.shutterViewModel = shutterViewModel
         binding.lifecycleOwner = this
 
-        cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-        cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
+        currentLenFacingString = getString(R.string.current_len_facing)
+        frontString = getString(R.string.camera_front)
+        backString = getString(R.string.camera_back)
 
-            val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(binding.cameraPreview.surfaceProvider)
-            }
-
-            val front = CameraSelector.DEFAULT_FRONT_CAMERA
-            val back = CameraSelector.DEFAULT_BACK_CAMERA
-
-            var cameraSelector: CameraSelector = front
-
-            when {
-                cameraProvider.hasCamera(front) -> {
-                    cameraSelector = front
-                }
-                cameraProvider.hasCamera(back) -> {
-                    cameraSelector = back
-                }
-                else -> {
-                    Toast.makeText(applicationContext, "Your phone has no cameras!", Toast.LENGTH_LONG)
-                         .show()
-                    setResult(Activity.RESULT_CANCELED)
-                    finish()
-                }
-            }
-
-            imageCapture = ImageCapture.Builder()
-                .setTargetRotation(binding.root.display.rotation)
-                .build()
-
-            try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
-            } catch (e: Exception) {
-                AlertDialog.Builder(applicationContext)
-                    .setTitle("Cannot load camera")
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
-                        setResult(Activity.RESULT_CANCELED)
-                        finish()
-                    }
-                    .show()
-            }
-        }, ContextCompat.getMainExecutor(this))
+        switchLenFacing(shutterViewModel.currentLenFacing.value!!, true)
 
         binding.apply {
             cancelCameraButton.setOnClickListener {
@@ -97,10 +71,10 @@ class ShutterActivity : AppCompatActivity() {
             takePhotoButton.setOnClickListener {
                 capture()
             }
+        }
 
-            switchCameraButton.setOnClickListener {
-                Snackbar.make(binding.root, "Switch not supported yet", Snackbar.LENGTH_SHORT).show()
-            }
+        shutterViewModel.currentLenFacing.observe(this) {
+            switchLenFacing(it)
         }
     }
 
@@ -112,7 +86,7 @@ class ShutterActivity : AppCompatActivity() {
                 object : ImageCapture.OnImageSavedCallback {
                     override fun onError(exception: ImageCaptureException) {
                         AlertDialog.Builder(applicationContext)
-                            .setTitle("Image capture failed")
+                            .setTitle(R.string.capture_failed)
                             .show()
                     }
 
@@ -120,7 +94,7 @@ class ShutterActivity : AppCompatActivity() {
                         val byteArray = it.toByteArray()
                         val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
 
-                        Toast.makeText(applicationContext, "Image captured successfully", Toast.LENGTH_LONG)
+                        Toast.makeText(applicationContext, R.string.capture_success, Toast.LENGTH_LONG)
                              .show()
 
                         intent.putExtra("bitmap", bitmap)
@@ -129,6 +103,112 @@ class ShutterActivity : AppCompatActivity() {
                     }
             })
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.camera_top_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    @SuppressLint("ShowToast")
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (notAllSupported) {
+            Snackbar.make(binding.root, "Switch not supported", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+
+        return when (item.itemId) {
+            R.id.switchMenuItem -> {
+                shutterViewModel.switch().let {
+                    val str = when (it) {
+                        LenFacing.BACK -> backString
+                        LenFacing.FRONT -> frontString
+                        else -> ""
+                    }
+
+                    Snackbar.make(binding.root, currentLenFacingString.format(str), Snackbar.LENGTH_SHORT)
+                        .darkPurple()
+                        .setGravity(Gravity.TOP)
+                        .show()
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun switchLenFacing(lenFacing: LenFacing, checkCamera: Boolean = false) {
+        var actualLenFacing = lenFacing
+
+        cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+        cameraProviderFuture.addListener({
+            val cameraProvider = cameraProviderFuture.get()
+
+            val preview = Preview.Builder().build().also {
+                it.setSurfaceProvider(binding.cameraPreview.surfaceProvider)
+            }
+
+            if (checkCamera) {
+                notAllSupported = false
+
+                var cameraExists = false
+                var defaultExists = false
+
+                for (entry in shutterViewModel.selectorMap) {
+                    if (cameraProvider.hasCamera(entry.value)) {
+                        cameraExists = true
+
+                        if (entry.key == shutterViewModel.currentLenFacing.value) {
+                            defaultExists = true
+                        }
+                    } else {
+                        notAllSupported = true
+                    }
+                }
+
+                if (!cameraExists) {
+                    endActivity {
+                        Toast.makeText(
+                            applicationContext,
+                            R.string.camera_not_exists,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
+                if (!defaultExists && shutterViewModel.currentLenFacing.value == lenFacing) {
+                    actualLenFacing = when (lenFacing) {
+                        LenFacing.FRONT -> {
+                            LenFacing.BACK
+                        }
+                        LenFacing.BACK -> {
+                            LenFacing.FRONT
+                        }
+                        else -> {
+                            return@addListener
+                        }
+                    }
+                }
+            }
+
+            imageCapture = ImageCapture.Builder()
+                .setTargetRotation(binding.root.display.rotation)
+                .build()
+
+            try {
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(this,
+                    shutterViewModel.selectorMap[actualLenFacing]!!, preview, imageCapture)
+            } catch (e: Exception) {
+                AlertDialog.Builder(applicationContext)
+                    .setTitle(R.string.camera_load_failed)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        setResult(Activity.RESULT_CANCELED)
+                        finish()
+                    }
+                    .show()
+            }
+        }, ContextCompat.getMainExecutor(this))
     }
 
     override fun onResume() {
@@ -160,15 +240,21 @@ class ShutterActivity : AppCompatActivity() {
         when (requestCode) {
             0 -> {
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(applicationContext,
-                        "Faceval Camera cannot work properly: camera permission is not granted",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    setResult(Activity.RESULT_CANCELED)
-                    finish()
+                    endActivity(Activity.RESULT_CANCELED) {
+                        Toast.makeText(applicationContext,
+                            R.string.camera_no_permission,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
             else -> {}
         }
+    }
+
+    private fun endActivity(resultCode: Int = RESULT_OK, before: Action = Action {  }) {
+        before.invoke()
+        setResult(resultCode)
+        finish()
     }
 }
