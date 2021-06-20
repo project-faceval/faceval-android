@@ -4,11 +4,11 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -21,12 +21,17 @@ import androidx.lifecycle.ViewModelProvider
 import com.chardon.faceval.android.R
 import com.chardon.faceval.android.databinding.ActivityShutterBinding
 import com.chardon.faceval.android.util.Action
+import com.chardon.faceval.android.util.BitmapUtil.save
+import com.chardon.faceval.android.util.BitmapUtil.toBitmap
+import com.chardon.faceval.android.util.FileNames
 import com.chardon.faceval.android.util.LenFacing
 import com.chardon.faceval.android.util.NotificationUtil.darkPurple
 import com.chardon.faceval.android.util.NotificationUtil.setGravity
 import com.google.android.material.snackbar.Snackbar
 import com.google.common.util.concurrent.ListenableFuture
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 
 class ShutterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityShutterBinding
@@ -61,7 +66,7 @@ class ShutterActivity : AppCompatActivity() {
 
         binding.apply {
             cancelCameraButton.setOnClickListener {
-                setResult(Activity.RESULT_CANCELED)
+                setResult(Activity.RESULT_CANCELED, intent)
                 finish()
             }
 
@@ -76,6 +81,8 @@ class ShutterActivity : AppCompatActivity() {
     }
 
     private fun capture() {
+        binding.loading.root.visibility = View.VISIBLE
+
         ByteArrayOutputStream().use {
             val outputFileOptions = ImageCapture.OutputFileOptions.Builder(it).build()
             imageCapture.takePicture(outputFileOptions,
@@ -85,16 +92,35 @@ class ShutterActivity : AppCompatActivity() {
                         AlertDialog.Builder(applicationContext)
                             .setTitle(R.string.capture_failed)
                             .show()
+
+                        binding.loading.root.visibility = View.GONE
                     }
 
                     override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                        val provider = cameraProviderFuture.get()
+                        provider.unbindAll()
+
+                        binding.loading.loadingPrompt.text = getString(R.string.saving)
+
                         val byteArray = it.toByteArray()
 
                         Toast.makeText(applicationContext, R.string.capture_success, Toast.LENGTH_LONG)
                              .show()
 
+                        File(applicationContext.filesDir, FileNames.RAW_IMG).apply {
+                            if (exists()) {
+                                delete()
+                            }
+
+                            createNewFile()
+
+                            FileOutputStream(this).use { fos ->
+                                byteArray.toBitmap().save(fos)
+                            }
+                        }
+
                         endActivity {
-                            intent.putExtra("image", byteArray)
+                            intent.putExtra("image", FileNames.RAW_IMG)
                         }
                     }
             })
@@ -199,7 +225,7 @@ class ShutterActivity : AppCompatActivity() {
                 AlertDialog.Builder(applicationContext)
                     .setTitle(R.string.camera_load_failed)
                     .setPositiveButton(android.R.string.ok) { _, _ ->
-                        setResult(Activity.RESULT_CANCELED)
+                        setResult(Activity.RESULT_CANCELED, intent)
                         finish()
                     }
                     .show()
@@ -250,7 +276,7 @@ class ShutterActivity : AppCompatActivity() {
 
     private fun endActivity(resultCode: Int = RESULT_OK, before: Action = Action {  }) {
         before.invoke()
-        setResult(resultCode)
+        setResult(resultCode, intent)
         finish()
     }
 }

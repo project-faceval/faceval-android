@@ -114,4 +114,10 @@
     <string name="detecting">AI is detecting…</string>
     <string name="scoring">AI is scoring…</string>
     <string name="finished">Faceval AI: Scoring is finished! 🐒</string>
+
+    <string name="confirm_upload">Really want to upload?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="uploading">Uploading…</string>
+    <string name="saving">Saving…</string>
 </resources>

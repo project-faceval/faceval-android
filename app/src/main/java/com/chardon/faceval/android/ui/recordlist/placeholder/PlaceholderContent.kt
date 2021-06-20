@@ -35,7 +35,7 @@ object PlaceholderContent {
     }
 
     private fun createPlaceholderItem(position: Int): PlaceholderItem {
-        return PlaceholderItem("https://static.vecteezy.com/system/resources/previews/000/420/940/original/avatar-icon-vector-illustration.jpg", "Title", 8.6, Date())
+        return PlaceholderItem("https://static.vecteezy.com/system/resources/previews/000/420/940/original/avatar-icon-vector-illustration.png", "Title", 8.6, Date())
     }
 
     /**

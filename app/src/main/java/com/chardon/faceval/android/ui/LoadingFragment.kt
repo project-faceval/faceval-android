@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.MutableLiveData
 import com.chardon.faceval.android.R
 import com.chardon.faceval.android.databinding.FragmentLoadingBinding
 
@@ -18,14 +17,6 @@ import com.chardon.faceval.android.databinding.FragmentLoadingBinding
 class LoadingFragment : Fragment() {
     private lateinit var binding: FragmentLoadingBinding
 
-    private val _message = MutableLiveData(getString(R.string.please_wait))
-
-    var message: String
-        get() = _message.value ?: ""
-        set(value) {
-            _message.value = value
-        }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -36,10 +27,6 @@ class LoadingFragment : Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_loading, container, false)
-
-        _message.observe(viewLifecycleOwner) {
-            binding.loadingPrompt.text = it
-        }
 
         return binding.root
     }

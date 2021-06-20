@@ -10,18 +10,24 @@
 //    @Query("SELECT * FROM photo;")
 //    fun getAll(): List<Photo>
 //
-//    @Query("SELECT * FROM photo WHERE user_id = :userId;")
-//    fun getByUser(userId: String): List<Photo>
+////    @Query("SELECT * FROM photo WHERE user_id = :userId;")
+////    fun getByUser(userId: String): List<Photo>
 //
 //    @Query("SELECT * FROM photo WHERE uuid_id = :uuid;")
 //    fun getByUUID(uuid: String): Photo
 //
+//    @Query("SELECT * FROM photo LIMIT 1;")
+//    fun getCurrent(): Photo?
+//
 //    @Insert
-//    fun insert(photo: Photo): Int
+//    fun insert(photo: Photo)
 //
 //    @Update
-//    fun update(photo: Photo): Int
+//    fun update(photo: Photo)
 //
 //    @Delete
-//    fun delete(photo: Photo): Int
+//    fun delete(photo: Photo)
+//
+//    @Query("DELETE FROM photo;")
+//    fun clear()
 //}

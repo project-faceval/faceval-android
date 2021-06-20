@@ -88,7 +88,7 @@ class LoginActivity : AppCompatActivity() {
                 updateUiWithUser(loginResult.success)
             }
 
-            setResult(Activity.RESULT_OK)
+            setResult(Activity.RESULT_OK, intent)
 
             //Complete and destroy login activity once successful
             finish()
@@ -122,7 +122,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.cancelButton.setOnClickListener {
-            setResult(Activity.RESULT_CANCELED)
+            setResult(Activity.RESULT_CANCELED, intent)
             finish()
         }
 

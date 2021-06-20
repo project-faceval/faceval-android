@@ -94,7 +94,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
 
                 intent.putExtra("canceled", false)
-                setResult(Activity.RESULT_OK)
+                setResult(Activity.RESULT_OK, intent)
                 viewModel.reset()
                 finish()
             }
@@ -120,7 +120,7 @@ class RegisterActivity : AppCompatActivity() {
 
         binding.cancelRegisterButton.setOnClickListener {
             intent.putExtra("canceled", true)
-            setResult(Activity.RESULT_CANCELED)
+            setResult(Activity.RESULT_CANCELED, intent)
             viewModel.reset()
             finish()
         }

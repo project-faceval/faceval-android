@@ -10,7 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import retrofit2.http.*
 
-const val BASE_URL = "http://47.109.80.112:9988/"
+const val BASE_URL = "http://10.194.170.237:9988/"
 
 private val retrofit by lazy {
     Retrofit.Builder()

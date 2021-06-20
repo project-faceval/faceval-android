@@ -1,7 +1,7 @@
 package com.chardon.faceval.android.ui.scoring
 
 import android.graphics.Bitmap
-import android.media.Image
+import android.util.Base64
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,14 +9,17 @@ import androidx.lifecycle.ViewModel
 import com.chardon.faceval.android.rest.client.AIClient
 import com.chardon.faceval.android.rest.client.APISet
 import com.chardon.faceval.android.rest.client.PhotoClient
+import com.chardon.faceval.android.util.Action
 import com.chardon.faceval.android.util.Base64Util.toBase64String
 import com.chardon.faceval.android.util.MiscExtensions.convertForScoring
 import com.chardon.faceval.android.util.MiscExtensions.toMap
 import com.chardon.faceval.android.util.ScoringPhases
 import com.chardon.faceval.entity.DetectionModelBase64
 import com.chardon.faceval.entity.DetectionResult
+import com.chardon.faceval.entity.PhotoInfo
+import com.chardon.faceval.entity.PhotoInfoUploadBase64
+import com.chardon.faceval.util.detectionmodelutils.Utils.toPosSet
 import kotlinx.coroutines.*
-import okhttp3.MultipartBody
 
 class ScoringViewModel : ViewModel() {
     private val _positions = MutableLiveData<DetectionResult>()
@@ -47,38 +50,20 @@ class ScoringViewModel : ViewModel() {
         APISet.aiClient
     }
 
-//    init {
-//        reset()
-//    }
+    private val photoClient: PhotoClient by lazy {
+        APISet.photoClient
+    }
 
     fun startScoring(image: Bitmap) {
         if (_currentPhase.value != ScoringPhases.IDLE) {
             return
         }
 
+        _currentImage.value = image
         _currentPhase.value = ScoringPhases.NOT_STARTED
-
-        scoringJob.invokeOnCompletion {
-            _currentPhase.value = ScoringPhases.SCORED
-        }
-
-        detectJob.invokeOnCompletion {
-            _currentPhase.value = ScoringPhases.DETECTED
-
-            scoringScope.launch {
-                _score.value = _positions.value?.let { it1 -> score(it1) }
-                scoringJob.complete()
-            }
-        }
-
-
-        detectScope.launch {
-            _positions.value = detect()
-            detectJob.complete()
-        }
     }
 
-    private suspend fun detect(): DetectionResult? {
+    suspend fun detect(): DetectionResult? {
         if (_currentImage.value == null) {
             return null
         }
@@ -89,6 +74,7 @@ class ScoringViewModel : ViewModel() {
         val model = DetectionModelBase64(
             ext = "png",
             bimg = base64,
+            useBase64 = "yes",
         )
 
         var result: DetectionResult? = null
@@ -99,27 +85,50 @@ class ScoringViewModel : ViewModel() {
             Log.e("ERROR", e.toString())
         }
 
-        detectionModel = model
+        if (result != null) {
+            detectionModel = model
+            _positions.value = result
+        }
 
         return result
     }
 
-    private suspend fun score(detectionResult: DetectionResult): List<Double> {
+    fun finishDetection() {
+        _currentPhase.value = ScoringPhases.DETECTED
+    }
+
+    suspend fun score(detectionResult: DetectionResult): List<Double> {
         if (currentImageBase64 == null || detectionModel == null) {
             return listOf()
         }
 
         var result = listOf<Double>()
 
-        try {
-            result = aiClient.scoreDetectedAsync(
-                detectionResult.convertForScoring(detectionModel!!).toMap())
-                .await()
-        } catch (e: Exception) {
-            Log.e("ERROR", e.toString())
+        val map = detectionResult.convertForScoring(detectionModel!!).toMap()
+
+        var retry = 5
+
+        while ((retry--) > 0) {
+            try {
+                result = aiClient.scoreDetectedAsync(map)
+                    .await()
+            } catch (e: Exception) {
+                Log.e("ERROR", e.toString())
+                if (e.toString() == "timeout") {
+                    continue
+                }
+            }
+            
+            break
         }
 
+        _score.value = result
+
         return result
+    }
+
+    fun finishScoring() {
+        _currentPhase.value = ScoringPhases.SCORED
     }
 
     fun complete() {
@@ -141,8 +150,8 @@ class ScoringViewModel : ViewModel() {
         _currentPhase.value = ScoringPhases.CANCELED
     }
 
-    @Synchronized
-    fun reset() {
+    fun reset(before: Action = Action {  }) {
+        before.invoke()
         cancel()
         _positions.value = null
         _score.value = null
@@ -150,5 +159,28 @@ class ScoringViewModel : ViewModel() {
         _currentPhase.value = ScoringPhases.IDLE
         currentImageBase64 = null
         detectionModel = null
+    }
+
+    suspend fun upload(username: String, password: String): PhotoInfo? {
+        val newPhoto = PhotoInfoUploadBase64(
+            id = username,
+            password = password,
+            image = _currentImage.value!!.toBase64String(),
+            ext = "png",
+            positions = _positions.value!!.toPosSet(),
+            score = _score.value!!.getOrElse(0) {7.0},
+            title = null,
+            description = null,
+        )
+
+        var photoInfo: PhotoInfo? = null
+
+        try {
+            photoInfo = photoClient.addPhotoAsync(newPhoto.toMap()).await()
+        } catch (e: Exception) {
+            Log.e("ERROR", e.toString())
+        }
+
+        return photoInfo
     }
 }

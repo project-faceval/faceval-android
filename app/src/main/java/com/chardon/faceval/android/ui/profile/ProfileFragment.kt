@@ -103,26 +103,14 @@ class ProfileFragment : Fragment() {
                     UserInfo(
                         id = extras["username"] as String,
                         displayName = extras["display_name"] as String,
-                        gender = extras["gender"] as Boolean,
-                        status = extras["status"] as String,
+                        gender = extras["gender"] as Boolean?,
+                        status = extras["status"] as String?,
                         dateAdded = Date(),
                         email = ""
                     )
                 )
 
                 refreshUI()
-
-//                val localJob = Job()
-//                val localScope = CoroutineScope(Dispatchers.Main + localJob)
-//
-//                localJob.invokeOnCompletion {
-//                    refreshUI()
-//                }
-//
-//                localScope.launch {
-//                    loginViewModel?.loginRepository?.refreshAsync()
-//                    localJob.complete()
-//                }
             }
         }
     }

@@ -3,6 +3,7 @@ package com.chardon.faceval.android.ui.home
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -21,9 +22,14 @@ import com.chardon.faceval.android.ui.login.LoginViewModel
 import com.chardon.faceval.android.ui.login.LoginViewModelFactory
 import com.chardon.faceval.android.ui.scoring.ScoringActivity
 import com.chardon.faceval.android.ui.shutter.ShutterActivity
+import com.chardon.faceval.android.util.BitmapUtil.save
 import com.chardon.faceval.android.util.BitmapUtil.toBitmap
+import com.chardon.faceval.android.util.FileNames
 import com.chardon.faceval.android.util.NotificationUtil.darkPurple
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
     companion object {
@@ -95,27 +101,28 @@ class HomeFragment : Fragment() {
         startActivityForResult(chooser, PICK_IMAGE)
     }
 
-    private fun callScoring(image: Bitmap) {
+    private fun callScoring(path: String) {
         val intent = Intent(requireActivity().applicationContext, ScoringActivity::class.java)
-        intent.putExtra("bitmap", image)
+        intent.putExtra("image_path", path)
         startActivityForResult(intent, CALL_SCORE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             CALL_CAMERA -> {
                 if (resultCode != Activity.RESULT_OK) {
                     return
                 }
 
-                val image = data?.getByteArrayExtra("image")
+                val image = data?.extras?.getString("image")
 
                 if (image == null) {
                     imageLoadFailedNotification()
                     return
                 }
 
-                callScoring(image.toBitmap())
+                callScoring(image)
             }
             PICK_IMAGE -> {
                 if (resultCode != Activity.RESULT_OK) {
@@ -138,10 +145,18 @@ class HomeFragment : Fragment() {
                     return
                 }
 
-                callScoring(bitmap)
+//                requireActivity().openFileOutput(FileNames.RAW_IMG, Context.MODE_PRIVATE).use {
+//                    bitmap.save(it)
+//                }
+                callScoring(FileNames.RAW_IMG)
             }
             CALL_SCORE -> {
+                if (resultCode != Activity.RESULT_OK) {
+                    return
+                }
 
+                requireActivity().intent.putExtra("navigate_add", true)
+                view?.findNavController()?.navigate(R.id.action_navigation_home_to_navigation_dashboard)
             }
             else -> {}
         }
@@ -153,30 +168,6 @@ class HomeFragment : Fragment() {
             .darkPurple()
             .show()
     }
-//
-//    override fun onCreateContextMenu(
-//        menu: ContextMenu,
-//        v: View,
-//        menuInfo: ContextMenu.ContextMenuInfo?
-//    ) {
-//        super.onCreateContextMenu(menu, v, menuInfo)
-//        val inflater: MenuInflater = requireActivity().menuInflater
-//        inflater.inflate(R.menu.image_source_chooser_menu, menu)
-//    }
-//
-//    override fun onContextItemSelected(item: MenuItem): Boolean {
-//        return when (item.itemId) {
-//            R.id.takePictureMenuItem -> {
-//                // TODO: Call camerax
-//                true
-//            }
-//            R.id.pickGalleryMenuItem -> {
-//                // TODO: Call image picker
-//                true
-//            }
-//            else -> super.onContextItemSelected(item)
-//        }
-//    }
 
     override fun onResume() {
         super.onResume()

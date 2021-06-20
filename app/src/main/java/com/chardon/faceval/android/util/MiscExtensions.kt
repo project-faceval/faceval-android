@@ -37,7 +37,6 @@ object MiscExtensions {
         "password" to password,
         "image" to image,
         "ext" to ext,
-        "useBase64" to useBase64,
         "score" to score.toString(),
         "title" to (title ?: ""),
         "description" to (description ?: ""),
@@ -57,13 +56,11 @@ object MiscExtensions {
         "bimg" to bimg,
         "ext" to ext,
         "posSet" to posSet,
-        "useBase64" to useBase64,
     )
 
     fun DetectionModelBase64.toMap(): Map<String, String> = mapOf(
         "bimg" to bimg,
         "ext" to ext,
-        "useBase64" to useBase64,
     )
 
     fun DetectionResult.convertForScoring(detectionModel: DetectionModelBase64): ScoringModelBase64 {
