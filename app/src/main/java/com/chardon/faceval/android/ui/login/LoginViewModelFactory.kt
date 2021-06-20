@@ -14,6 +14,7 @@ import com.chardon.faceval.android.data.dao.UserDao
 class LoginViewModelFactory(private val userDao: UserDao,
                             private val application: Application) : ViewModelProvider.Factory {
     companion object Store {
+        @Volatile
         var viewModel: LoginViewModel? = null
     }
 

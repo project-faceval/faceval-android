@@ -33,9 +33,9 @@ interface UserClient {
     @POST("/user")
     fun createUserAsync(@FieldMap user: Map<String, String>): Deferred<UserInfo>
 
-    // Model: UserInfoUpload
+    // UserInfoUpload
     @PUT("/user")
-    fun updateUserAsync(@FieldMap user: Map<String, String>): Deferred<UserInfo>
+    fun updateUserAsync(@QueryMap user: Map<String, String>): Deferred<UserInfo>
 
     @DELETE("/user")
     fun deleteUserAsync(@Query("username") userName: String,
@@ -63,8 +63,9 @@ interface PhotoClient {
     @POST("/photo")
     fun addPhotoAsync(@FieldMap newPhoto: Map<String, String>): Deferred<PhotoInfo>
 
+    // PhotoInfoUpdate
     @PUT("/photo")
-    fun updatePhotoInfoAsync(@Body newPhotoInfo: PhotoInfoUpdate): Deferred<PhotoInfo>
+    fun updatePhotoInfoAsync(@QueryMap newPhotoInfo: Map<String, String>): Deferred<PhotoInfo>
 
     @DELETE("/photo")
     fun deletePhotoAsync(@Query("id") userName: String,
@@ -74,17 +75,20 @@ interface PhotoClient {
 
 interface AIClient {
 
+    // DetectionModelBase64
     @FormUrlEncoded
     @POST("/eval")
-    fun scoreAsync(@Body scoring: ScoringModelBase64): Deferred<List<Double>>
+    fun scoreAsync(@FieldMap scoring: Map<String, String>): Deferred<List<Double>>
 
+    // DetectionModelBase64
     @FormUrlEncoded
     @POST("/eval/detect")
-    fun detectAsync(@Body detection: DetectionModelBase64): Deferred<DetectionResult>
+    fun detectAsync(@FieldMap detection: Map<String, String>): Deferred<DetectionResult>
 
+    // ScoringModelBase64
     @FormUrlEncoded
     @POST("/eval/scoring")
-    fun scoreDetectedAsync(@Body scoring: ScoringModelBase64): Deferred<List<Double>>
+    fun scoreDetectedAsync(@FieldMap scoring: Map<String, String>): Deferred<List<Double>>
 }
 
 object APISet {

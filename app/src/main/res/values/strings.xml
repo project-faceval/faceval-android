@@ -84,12 +84,12 @@
     <string name="covered_eyes_monkey_emoji">🙈</string>
     <string name="bunny_women_emoji">👯</string>
     <string name="cat_love_emoji">😻</string>
-    <string name="scoring_prompt">Scoring...</string>
+    <string name="scoring_prompt">Scoring…</string>
 
     <string name="logout_confirm_title">Do you really want to logout?</string>
     <string name="take_picture_prompt">Take a picture</string>
     <string name="pick_from_gallery_prompt">Pick one from gallery</string>
-    <string name="please_wait">Please wait...</string>
+    <string name="please_wait">Please wait…</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="image_source_select">Select where to get an image</string>
@@ -108,4 +108,10 @@
 
     <string name="select_photo">Select a picture</string>
     <string name="image_load_failed">Failed to load the image</string>
+
+    <string name="prepare">Preparing…</string>
+    <string name="encoding">Encoding…</string>
+    <string name="detecting">AI is detecting…</string>
+    <string name="scoring">AI is scoring…</string>
+    <string name="finished">Faceval AI: Scoring is finished! 🐒</string>
 </resources>

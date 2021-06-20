@@ -45,7 +45,7 @@ object FieldChecker {
 
     suspend fun usernameAsync(username: String): Boolean {
         return withContext(Dispatchers.IO) {
-            userClient.checkValidity(username).await().trim() != "INVALID"
+            userClient.checkValidityAsync(username).await().trim() != "INVALID"
         }
     }
 
@@ -69,7 +69,7 @@ object FieldChecker {
 
     suspend fun usernameNotConflict(username: String): Boolean {
         return withContext(Dispatchers.IO) {
-            userClient.checkValidity(username).await().trim() != "EXISTS"
+            userClient.checkValidityAsync(username).await().trim() != "EXISTS"
         }
     }
 }

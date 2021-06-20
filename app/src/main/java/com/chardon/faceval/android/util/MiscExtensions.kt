@@ -1,12 +1,10 @@
 package com.chardon.faceval.android.util
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
-import com.chardon.faceval.entity.PhotoInfoUploadBase64
-import com.chardon.faceval.entity.UserInfoUpload
+import com.chardon.faceval.entity.*
+import com.chardon.faceval.util.detectionmodelutils.Utils.toPosSet
 
 object MiscExtensions {
 
@@ -25,28 +23,54 @@ object MiscExtensions {
         })
     }
 
-    fun UserInfoUpload.toMap(): Map<String, String> {
-        return mapOf(
-            "id" to id,
-            "displayName" to displayName,
-            "email" to email,
-            "gender" to if (gender == null) "" else gender.toString(),
-            "password" to password,
-            "status" to (status ?: ""),
-        )
-    }
+    fun UserInfoUpload.toMap(): Map<String, String> = mapOf(
+        "id" to id,
+        "displayName" to displayName,
+        "email" to email,
+        "gender" to if (gender == null) "" else gender.toString(),
+        "password" to password,
+        "status" to (status ?: ""),
+    )
 
-    fun PhotoInfoUploadBase64.toMap(): Map<String, String> {
-        return mapOf(
-            "id" to id,  // User Name
-            "password" to password,
-            "image" to image,
-            "ext" to ext,
-            "useBase64" to useBase64,
-            "score" to score.toString(),
-            "title" to (title ?: ""),
-            "description" to (description ?: ""),
-            "positions" to positions,
+    fun PhotoInfoUploadBase64.toMap(): Map<String, String> = mapOf(
+        "id" to id,  // User Name
+        "password" to password,
+        "image" to image,
+        "ext" to ext,
+        "useBase64" to useBase64,
+        "score" to score.toString(),
+        "title" to (title ?: ""),
+        "description" to (description ?: ""),
+        "positions" to positions,
+    )
+
+    fun PhotoInfoUpdate.toMap(): Map<String, String> = mapOf(
+        "description" to (description ?: ""),
+        "id" to id,
+        "password" to password,
+        "photoId" to photoId.toString(),
+        "score" to score.toString(),
+        "title" to (title ?: ""),
+    )
+
+    fun ScoringModelBase64.toMap(): Map<String, String> = mapOf(
+        "bimg" to bimg,
+        "ext" to ext,
+        "posSet" to posSet,
+        "useBase64" to useBase64,
+    )
+
+    fun DetectionModelBase64.toMap(): Map<String, String> = mapOf(
+        "bimg" to bimg,
+        "ext" to ext,
+        "useBase64" to useBase64,
+    )
+
+    fun DetectionResult.convertForScoring(detectionModel: DetectionModelBase64): ScoringModelBase64 {
+        return ScoringModelBase64(
+            bimg = detectionModel.bimg,
+            ext = detectionModel.ext,
+            posSet = this.toPosSet(),
         )
     }
 }
