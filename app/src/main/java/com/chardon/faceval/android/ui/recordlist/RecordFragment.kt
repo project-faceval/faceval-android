@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.chardon.faceval.android.R
@@ -114,10 +115,13 @@ class RecordFragment : Fragment() {
 
                 val user = loginDataSource.getCurrentUser()
 
+                binding.notePanel.isVisible = user == null
+
                 if (user == null) {
-                    Snackbar.make(requireView(), "Cannot get user info", Snackbar.LENGTH_LONG)
-                        .darkPurple()
-                        .show()
+//                    Snackbar.make(requireView(), "Cannot get user info", Snackbar.LENGTH_LONG)
+//                        .darkPurple()
+//                        .show()
+                    binding.refreshLayout.isRefreshing = false
                     return
                 }
 

@@ -107,7 +107,7 @@ class RecordDetailActivity : AppCompatActivity() {
                 val user = loginDataSource.getCurrentUser() ?: return@launch
 
                 try {
-                    val photoInfo = photoClient.updatePhotoInfoAsync(
+                    photoClient.updatePhotoInfoAsync(
                         PhotoInfoUpdate(
                             id = user.id,
                             password = user.password!!,
@@ -116,7 +116,7 @@ class RecordDetailActivity : AppCompatActivity() {
                             description = binding.descriptionEntry.text.toString(),
                             score = null,
                         ).toMap()
-                    )
+                    ).await()
                 } catch (e: Exception) {
                     Toast.makeText(applicationContext, "Update failed", Toast.LENGTH_LONG)
                         .show()
@@ -140,7 +140,7 @@ class RecordDetailActivity : AppCompatActivity() {
                         binding.loading.root.visibility = View.VISIBLE
 
                         try {
-                            val status = photoClient.deletePhotoAsync(user.id, user.password!!, photoId)
+                            photoClient.deletePhotoAsync(user.id, user.password!!, photoId).await()
                         } catch (e: Exception) {
                             Toast.makeText(applicationContext, "Failed", Toast.LENGTH_LONG)
                                 .show()
