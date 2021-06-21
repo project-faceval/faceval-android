@@ -9,14 +9,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 
-import com.chardon.faceval.android.ui.recordlist.placeholder.PlaceholderContent.PlaceholderItem
 import com.chardon.faceval.android.databinding.FragmentItemBinding
 
 /**
- * [RecyclerView.Adapter] that can display a [PlaceholderItem].
+ * [RecyclerView.Adapter] that can display a [ListItem].
  */
 class DefaultRecordRecyclerViewAdapter(
-    private val values: List<PlaceholderItem>
+    private val values: List<ListItem>
 ) : RecyclerView.Adapter<DefaultRecordRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,9 +33,10 @@ class DefaultRecordRecyclerViewAdapter(
     @SuppressLint("SimpleDateFormat")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values[position]
-        holder.imageView.setImageURI(Uri.parse(item.imageSrc))
+//        holder.imageView.setImageURI(Uri.parse(item.imageSrc))
+        item.bitmap?.let { holder.imageView.setImageBitmap(it) }
         holder.titleView.text = item.title
-        holder.scoreView.text = item.score.toString()
+        holder.scoreView.text = String.format("%.1f", item.score)
         holder.dateAddedView.text = SimpleDateFormat("yyyy-MM-dd").format(item.dateAdded)
     }
 

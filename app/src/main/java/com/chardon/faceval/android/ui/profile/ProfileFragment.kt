@@ -19,6 +19,7 @@ import com.chardon.faceval.android.ui.login.LoginViewModelFactory
 import com.chardon.faceval.entity.UserInfo
 import kotlinx.coroutines.*
 import java.util.*
+import kotlin.system.exitProcess
 
 class ProfileFragment : Fragment() {
     companion object {
@@ -84,6 +85,10 @@ class ProfileFragment : Fragment() {
                     }
                     .setNegativeButton(android.R.string.cancel) { _, _ -> }
                     .show()
+            }
+
+            exitButton.setOnClickListener {
+                exitProcess(0)
             }
         }
 

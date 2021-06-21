@@ -18,6 +18,8 @@ import androidx.navigation.findNavController
 import com.chardon.faceval.android.R
 import com.chardon.faceval.android.data.UserDatabase
 import com.chardon.faceval.android.databinding.FragmentHomeBinding
+import com.chardon.faceval.android.rest.client.APISet
+import com.chardon.faceval.android.rest.client.PhotoClient
 import com.chardon.faceval.android.ui.login.LoginViewModel
 import com.chardon.faceval.android.ui.login.LoginViewModelFactory
 import com.chardon.faceval.android.ui.scoring.ScoringActivity
@@ -26,10 +28,9 @@ import com.chardon.faceval.android.util.BitmapUtil.save
 import com.chardon.faceval.android.util.BitmapUtil.toBitmap
 import com.chardon.faceval.android.util.FileNames
 import com.chardon.faceval.android.util.NotificationUtil.darkPurple
+import com.chardon.faceval.entity.PhotoInfo
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class HomeFragment : Fragment() {
     companion object {
@@ -43,6 +44,13 @@ class HomeFragment : Fragment() {
     private lateinit var loginViewModel: LoginViewModel
 
     private lateinit var binding: FragmentHomeBinding
+
+    private val photoClient: PhotoClient by lazy {
+        APISet.photoClient
+    }
+
+    private val bestScoreUpdateJob = Job()
+    private val bestScoreUpdateScope = CoroutineScope(Dispatchers.Main + bestScoreUpdateJob)
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -182,6 +190,35 @@ class HomeFragment : Fragment() {
             if (repo.isLoggedIn && repo.user != null) {
                 binding.aChicken.text = getString(R.string.chicken_emoji)
                 binding.signinPrompt.text = getString(R.string.signedin_prompt)
+
+                bestScoreUpdateScope.launch {
+                    val photos = photoClient.getPhotosAsync(
+                        photoId = null, userName = repo.user!!.id, attachBase = false).await()
+
+                    val maxScoreOptional = photos.stream().max(Comparator<PhotoInfo> { o1, o2 ->
+                        if (o1 == null && o2 == null) {
+                            return@Comparator 0
+                        }
+
+                        if (o1 == null) {
+                            return@Comparator -1
+                        }
+
+                        if (o2 == null) {
+                            return@Comparator 1
+                        }
+
+                        o1.score.compareTo(o2.score)
+                    })
+
+                    if (maxScoreOptional.isPresent) {
+                        binding.bestScoreLabel.text = getString(R.string.best_score_prompt)
+                        binding.scoreShowLabel.text = String.format("%.1f", maxScoreOptional.get().score)
+                    } else {
+                        binding.bestScoreLabel.text = getString(R.string.take_photo_prompt)
+                        binding.scoreShowLabel.text = ""
+                    }
+                }
             } else {
                 binding.aChicken.text = getString(R.string.egg_emoji)
                 binding.signinPrompt.text = getString(R.string.signin_prompt)

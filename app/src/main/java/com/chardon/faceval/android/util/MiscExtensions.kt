@@ -3,8 +3,12 @@ package com.chardon.faceval.android.util
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import com.chardon.faceval.android.R
+import com.chardon.faceval.android.ui.recordlist.ListItem
+import com.chardon.faceval.android.util.Base64Util.base64ToBitmap
 import com.chardon.faceval.entity.*
 import com.chardon.faceval.util.detectionmodelutils.Utils.toPosSet
+import java.util.*
 
 object MiscExtensions {
 
@@ -69,5 +73,23 @@ object MiscExtensions {
             ext = detectionModel.ext,
             posSet = this.toPosSet(),
         )
+    }
+
+    fun PhotoInfo.toListItem(): ListItem {
+        return ListItem(
+            photoId = this.id,
+            bitmap = if (this.base.isEmpty()) null else this.base.base64ToBitmap(),
+            title = (this.title?.let { if (it.isBlank()) "No title" else it } ?: ""),
+            score = this.score,
+            dateAdded = dateAdded,
+        )
+    }
+
+    fun Collection<PhotoInfo>.toListItemList(): List<ListItem> {
+        return LinkedList<ListItem>().apply {
+            for (item in this@toListItemList) {
+                this.add(item.toListItem())
+            }
+        }
     }
 }

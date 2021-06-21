@@ -54,23 +54,23 @@ interface UserClient {
 
 interface PhotoClient {
 
-    @GET("/photo")
-    fun getPhotosAsync(@Query("photo_id") photoId: Long,
-                       @Query("user_id") userName: String,
+    @GET("/photo/")
+    fun getPhotosAsync(@Query("photo_id") photoId: Long?,
+                       @Query("user_id") userName: String?,
                        @Query("attach_base") attachBase: Boolean = false): Deferred<List<PhotoInfo>>
 
     // Model: PhotoInfoUploadBase64
     @FormUrlEncoded
-    @POST("/photo")
+    @POST("/photo/")
     fun addPhotoAsync(@FieldMap newPhoto: Map<String, String>,
                       @Query("attach_base") attachBase: Boolean = false): Deferred<PhotoInfo>
 
     // PhotoInfoUpdate
-    @PUT("/photo")
+    @PUT("/photo/")
     fun updatePhotoInfoAsync(@QueryMap newPhotoInfo: Map<String, String>,
                              @Query("attach_base") attachBase: Boolean = false): Deferred<PhotoInfo>
 
-    @DELETE("/photo")
+    @DELETE("/photo/")
     fun deletePhotoAsync(@Query("id") userName: String,
                          @Query("password") password: String,
                          @Query("photo_id") photoId: Long): Deferred<Map<String, String>>

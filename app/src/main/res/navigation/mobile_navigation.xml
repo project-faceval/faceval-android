@@ -34,9 +34,9 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_history"
-        android:name="com.chardon.faceval.android.ui.dashboard.DashboardFragment"
+        android:name="com.chardon.faceval.android.ui.recordlist.RecordFragment"
         android:label="@string/title_history"
-        tools:layout="@layout/fragment_dashboard" >
+        tools:layout="@layout/fragment_item_list" >
         <action
             android:id="@+id/action_navigation_dashboard_to_navigation_profile"
             app:destination="@id/navigation_profile" />

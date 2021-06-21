@@ -116,7 +116,7 @@
                 android:id="@+id/scoreShowLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/demo_score"
+                android:text="@string/reading"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="@+id/bestScoreLabel"

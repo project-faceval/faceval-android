@@ -74,7 +74,7 @@
 
     <string name="register_failed">Register failed</string>
     <string name="logout">Logout</string>
-    <string name="best_score_prompt">Your best score</string>
+    <string name="best_score_prompt">My best score</string>
     <string name="signin_prompt">Sign in to explore!</string>
     <string name="signedin_prompt">Let\'s rock!</string>
 
@@ -120,4 +120,9 @@
     <string name="no">No</string>
     <string name="uploading">Uploading…</string>
     <string name="saving">Saving…</string>
+    <string name="no_record">No record 🙈</string>
+
+    <string name="quit">Quit</string>
+    <string name="take_photo_prompt">Take your first photo!</string>
+    <string name="reading">Reading…</string>
 </resources>

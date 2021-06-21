@@ -1,7 +1,6 @@
 package com.chardon.faceval.android.ui.scoring
 
 import android.graphics.Bitmap
-import android.util.Base64
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
