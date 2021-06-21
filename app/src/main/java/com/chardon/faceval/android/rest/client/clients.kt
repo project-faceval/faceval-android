@@ -10,7 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import retrofit2.http.*
 
-const val BASE_URL = "http://10.194.170.237:9988/"
+const val BASE_URL = "http://47.109.80.112:9988/"
 
 private val retrofit by lazy {
     Retrofit.Builder()
@@ -55,17 +55,20 @@ interface UserClient {
 interface PhotoClient {
 
     @GET("/photo")
-    fun getPhotosAsync(@Path("photo_id") photoId: Long,
-                       @Path("user_id") userName: String): Deferred<List<PhotoInfo>>
+    fun getPhotosAsync(@Query("photo_id") photoId: Long,
+                       @Query("user_id") userName: String,
+                       @Query("attach_base") attachBase: Boolean = false): Deferred<List<PhotoInfo>>
 
     // Model: PhotoInfoUploadBase64
     @FormUrlEncoded
     @POST("/photo")
-    fun addPhotoAsync(@FieldMap newPhoto: Map<String, String>): Deferred<PhotoInfo>
+    fun addPhotoAsync(@FieldMap newPhoto: Map<String, String>,
+                      @Query("attach_base") attachBase: Boolean = false): Deferred<PhotoInfo>
 
     // PhotoInfoUpdate
     @PUT("/photo")
-    fun updatePhotoInfoAsync(@QueryMap newPhotoInfo: Map<String, String>): Deferred<PhotoInfo>
+    fun updatePhotoInfoAsync(@QueryMap newPhotoInfo: Map<String, String>,
+                             @Query("attach_base") attachBase: Boolean = false): Deferred<PhotoInfo>
 
     @DELETE("/photo")
     fun deletePhotoAsync(@Query("id") userName: String,

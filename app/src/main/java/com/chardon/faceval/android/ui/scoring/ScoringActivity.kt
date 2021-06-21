@@ -242,9 +242,11 @@ class ScoringActivity : AppCompatActivity() {
 
             val photoInfo = scoringViewModel.upload(user.id, user.password ?: "")
             if (photoInfo == null) {
-                Snackbar.make(binding.root, "Unexpected error", Snackbar.LENGTH_LONG)
+                Snackbar.make(binding.root, "Upload failed", Snackbar.LENGTH_LONG)
                     .darkPurple()
                     .show()
+                setResult(RESULT_CANCELED, intent)
+                finish()
                 return@launch
             }
 

@@ -28,4 +28,22 @@ class DashboardFragment : Fragment() {
 //        })
         return root
     }
+
+    private fun updateItem(index: Int) {
+        // TODO
+    }
+
+    private fun refresh() {
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val navigateAdd = requireActivity().intent.getBooleanExtra("navigate_add", false)
+        
+        if (navigateAdd) {
+            updateItem(0)
+        }
+    }
 }
