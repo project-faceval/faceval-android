@@ -31,6 +31,8 @@ import com.chardon.faceval.android.util.NotificationUtil.darkPurple
 import com.chardon.faceval.entity.PhotoInfo
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
+import java.io.File
+import java.io.FileOutputStream
 
 class HomeFragment : Fragment() {
     companion object {
@@ -153,9 +155,17 @@ class HomeFragment : Fragment() {
                     return
                 }
 
-//                requireActivity().openFileOutput(FileNames.RAW_IMG, Context.MODE_PRIVATE).use {
-//                    bitmap.save(it)
-//                }
+                File(requireActivity().applicationContext.filesDir, FileNames.RAW_IMG).apply {
+                    if (exists()) {
+                        delete()
+                    }
+
+                    createNewFile()
+
+                    FileOutputStream(this).use { fos ->
+                        bitmap.save(fos)
+                    }
+                }
                 callScoring(FileNames.RAW_IMG)
             }
             CALL_SCORE -> {

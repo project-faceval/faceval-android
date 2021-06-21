@@ -52,7 +52,7 @@ object MiscExtensions {
         "id" to id,
         "password" to password,
         "photoId" to photoId.toString(),
-        "score" to score.toString(),
+        "score" to (score ?: ""),
         "title" to (title ?: ""),
     )
 

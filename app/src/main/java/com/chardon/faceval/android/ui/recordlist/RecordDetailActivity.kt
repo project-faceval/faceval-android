@@ -99,8 +99,6 @@ class RecordDetailActivity : AppCompatActivity() {
             val uploadScope = CoroutineScope(Dispatchers.Main + uploadJob)
 
             uploadJob.invokeOnCompletion {
-                Toast.makeText(applicationContext, "Update success", Toast.LENGTH_LONG)
-                    .show()
                 setResult(RESULT_OK, intent)
                 finish()
             }
@@ -108,14 +106,25 @@ class RecordDetailActivity : AppCompatActivity() {
             uploadScope.launch {
                 val user = loginDataSource.getCurrentUser() ?: return@launch
 
-                val photoInfo = photoClient.updatePhotoInfoAsync(PhotoInfoUpdate(
-                    id = user.id,
-                    password = user.password!!,
-                    photoId = photoId,
-                    title = binding.detailTitleEntry.text.toString(),
-                    description = binding.descriptionEntry.text.toString(),
-                    score = null,
-                ).toMap())
+                try {
+                    val photoInfo = photoClient.updatePhotoInfoAsync(
+                        PhotoInfoUpdate(
+                            id = user.id,
+                            password = user.password!!,
+                            photoId = photoId,
+                            title = binding.detailTitleEntry.text.toString(),
+                            description = binding.descriptionEntry.text.toString(),
+                            score = null,
+                        ).toMap()
+                    )
+                } catch (e: Exception) {
+                    Toast.makeText(applicationContext, "Update failed", Toast.LENGTH_LONG)
+                        .show()
+                    return@launch
+                }
+
+                Toast.makeText(applicationContext, "Update success", Toast.LENGTH_LONG)
+                    .show()
 
                 uploadJob.complete()
             }
