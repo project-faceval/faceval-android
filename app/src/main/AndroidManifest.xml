@@ -18,45 +18,52 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FacevalAndroid"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.shutter.ShutterActivity"
-            android:label="@string/title_take_photo"
+        <activity
+            android:name=".ui.recordlist.RecordDetailActivity"
+            android:label="@string/update_detail"
             android:theme="@style/Theme.FacevalAndroid"
             android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"/>
+        <activity
+            android:name=".ui.shutter.ShutterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_take_photo"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.FacevalAndroid.Material"
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".ui.login.RegisterActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/register"
             android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            tools:ignore="LockedOrientationActivity"/>
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".ui.scoring.ScoringActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_scoring"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.FacevalAndroid"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            tools:ignore="LockedOrientationActivity"/>
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".SettingsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.FacevalAndroid"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            tools:ignore="LockedOrientationActivity"/>
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".ui.login.LoginActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_login"
             android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            tools:ignore="LockedOrientationActivity"/>
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".SplashActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:noHistory="true"
-            android:theme="@style/MainTheme.Splash"
             android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/MainTheme.Splash"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -66,10 +73,10 @@
         </activity>
         <activity
             android:name=".MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            tools:ignore="LockedOrientationActivity"/>
+            tools:ignore="LockedOrientationActivity" />
 
         <meta-data
             android:name="preloaded_fonts"

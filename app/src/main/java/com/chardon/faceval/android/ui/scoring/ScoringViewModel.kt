@@ -10,6 +10,7 @@ import com.chardon.faceval.android.rest.client.APISet
 import com.chardon.faceval.android.rest.client.PhotoClient
 import com.chardon.faceval.android.util.Action
 import com.chardon.faceval.android.util.Base64Util.toBase64String
+import com.chardon.faceval.android.util.BitmapUtil.scaleTo
 import com.chardon.faceval.android.util.MiscExtensions.convertForScoring
 import com.chardon.faceval.android.util.MiscExtensions.toMap
 import com.chardon.faceval.android.util.ScoringPhases
@@ -65,7 +66,7 @@ class ScoringViewModel : ViewModel() {
         _currentPhase.value = ScoringPhases.NOT_STARTED
     }
 
-    suspend fun detect(): DetectionResult? {
+    suspend fun detect(beforeDetection: Action = Action {  }): DetectionResult? {
         if (_currentImage.value == null) {
             return null
         }
@@ -81,6 +82,7 @@ class ScoringViewModel : ViewModel() {
 
         var result: DetectionResult? = null
 
+        beforeDetection.invoke()
         try {
             result = aiClient.detectAsync(model.toMap()).await()
         } catch (e: Exception) {
@@ -170,7 +172,7 @@ class ScoringViewModel : ViewModel() {
         val newPhoto = PhotoInfoUploadBase64(
             id = username,
             password = password,
-            image = _currentImage.value!!.toBase64String(),
+            image = _currentImage.value!!.scaleTo(thumbnail = true).toBase64String(),
             ext = "png",
             positions = _positions.value!!.toPosSet(),
             score = _score.value!!.getOrElse(0) {7.0},

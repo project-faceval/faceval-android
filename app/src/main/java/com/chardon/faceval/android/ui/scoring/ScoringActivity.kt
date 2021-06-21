@@ -140,10 +140,12 @@ class ScoringActivity : AppCompatActivity() {
                         }
                     }
                     ScoringPhases.NOT_STARTED -> {
-                        messageField.text = getString(R.string.detecting)
+                        messageField.text = getString(R.string.encoding)
 
                         scoringScope.launch {
-                            val result = scoringViewModel.detect()
+                            val result = scoringViewModel.detect {
+                                messageField.text = getString(R.string.detecting)
+                            }
                             if (result == null) {
                                 Toast.makeText(applicationContext, "No face detected", Toast.LENGTH_LONG)
                                     .show()

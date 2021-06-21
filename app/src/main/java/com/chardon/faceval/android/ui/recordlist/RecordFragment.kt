@@ -1,6 +1,8 @@
 package com.chardon.faceval.android.ui.recordlist
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -63,14 +65,13 @@ class RecordFragment : Fragment() {
             R.layout.fragment_item_list, container, false)
 
         binding.refreshLayout.setOnRefreshListener {
-            refreshScope.cancel("New task come")
             refreshScope.launch {
                 refreshAsync()
             }
         }
 
         recordViewModel.records.observe(viewLifecycleOwner) {
-            binding.list.adapter = DefaultRecordRecyclerViewAdapter(it)
+            binding.list.adapter = DefaultRecordRecyclerViewAdapter(it, requireActivity())
             binding.notePanel.isGone = it.isNotEmpty()
         }
 
@@ -81,10 +82,20 @@ class RecordFragment : Fragment() {
         return binding.root
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            UPDATE_DETAIL -> {
+                if (resultCode != Activity.RESULT_OK) {
+                    return
+                }
 
-
-    private fun updateItem(index: Int) {
-        // TODO
+                refreshScope.launch {
+                    refreshAsync()
+                }
+            }
+            else -> {}
+        }
     }
 
     @SuppressLint("ShowToast")
@@ -152,7 +163,9 @@ class RecordFragment : Fragment() {
         val navigateAdd = requireActivity().intent.getBooleanExtra("navigate_add", false)
 
         if (navigateAdd) {
-            updateItem(0)
+            refreshScope.launch {
+                refreshAsync()
+            }
         }
     }
 
@@ -171,5 +184,7 @@ class RecordFragment : Fragment() {
                     putInt(ARG_COLUMN_COUNT, columnCount)
                 }
             }
+
+        const val UPDATE_DETAIL = 1
     }
 }

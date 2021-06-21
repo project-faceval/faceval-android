@@ -110,7 +110,7 @@
     <string name="image_load_failed">Failed to load the image</string>
 
     <string name="prepare">Preparing…</string>
-    <string name="encoding">Encoding…</string>
+    <string name="encoding">Processing image…</string>
     <string name="detecting">AI is detecting…</string>
     <string name="scoring">AI is scoring…</string>
     <string name="finished">Faceval AI: Scoring is finished! 🐒</string>
@@ -125,4 +125,8 @@
     <string name="quit">Quit</string>
     <string name="take_photo_prompt">Take your first photo!</string>
     <string name="reading">Reading…</string>
+    <string name="update_detail">Update details</string>
+    <string name="no_title">Title</string>
+    <string name="description">Description</string>
+    <string name="delete">Delete</string>
 </resources>
