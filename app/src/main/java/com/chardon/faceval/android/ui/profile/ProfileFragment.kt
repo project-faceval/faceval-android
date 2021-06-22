@@ -131,7 +131,7 @@ class ProfileFragment : Fragment() {
                     )
                 )
 
-                refreshUI()
+                refreshUI(reload = true)
             }
         }
     }
@@ -142,8 +142,8 @@ class ProfileFragment : Fragment() {
     }
 
     @SuppressLint("ShowToast")
-    private fun refreshUI() {
-        if (!loaded) {
+    private fun refreshUI(reload: Boolean = false) {
+        if (!loaded || reload) {
             binding.avatarView.setImageResource(R.drawable.faceval)
             loaded = true
         }
