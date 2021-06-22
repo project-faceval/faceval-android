@@ -1,5 +1,6 @@
 package com.chardon.faceval.android.ui.profile
 
+import android.graphics.Bitmap
 import android.media.Image
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,7 +20,8 @@ class ProfileViewModel : ViewModel() {
     private val _gender = MutableLiveData<Boolean?>()
     val gender: LiveData<Boolean?> = _gender
 
-    private var requestCode: Int = 0
+    private val _avatar = MutableLiveData<Bitmap>()
+    val avatar: LiveData<Bitmap> = _avatar
 
     fun setUser(userInfo: UserInfo) {
         _displayName.value = userInfo.displayName
@@ -27,9 +29,7 @@ class ProfileViewModel : ViewModel() {
         _gender.value = userInfo.gender
     }
 
-    fun useRequestCode(): Int {
-        synchronized(requestCode) {
-            return requestCode++
-        }
+    fun setAvatar(bitmap: Bitmap) {
+        _avatar.value = bitmap
     }
 }

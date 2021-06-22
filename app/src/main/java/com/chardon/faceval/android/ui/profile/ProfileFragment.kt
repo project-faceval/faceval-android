@@ -40,7 +40,8 @@ class ProfileFragment : Fragment() {
 
     private lateinit var profileViewModel: ProfileViewModel
 
-    private var loaded: Boolean = false
+    private val loaded: Boolean
+        get() = profileViewModel.avatar.value != null
 
     private val avatarFetchJob = Job()
     private val avatarFetchScope = CoroutineScope(Dispatchers.Main + avatarFetchJob)
@@ -81,6 +82,10 @@ class ProfileFragment : Fragment() {
 
             userName.observe(viewLifecycleOwner) {
                 binding.userIdLabel.text = it
+            }
+
+            avatar.observe(viewLifecycleOwner) {
+                binding.avatarView.setImageBitmap(it)
             }
         }
 
@@ -145,7 +150,6 @@ class ProfileFragment : Fragment() {
     private fun refreshUI(reload: Boolean = false) {
         if (!loaded || reload) {
             binding.avatarView.setImageResource(R.drawable.faceval)
-            loaded = true
         }
 
         loginViewModel.loginRepository.ready {
@@ -189,7 +193,7 @@ class ProfileFragment : Fragment() {
                     return@launch
                 }
 
-                binding.avatarView.setImageBitmap(photoInfo.base.base64ToBitmap())
+                profileViewModel.setAvatar(photoInfo.base.base64ToBitmap())
             }
         }
     }
