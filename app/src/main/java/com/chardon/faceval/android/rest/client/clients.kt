@@ -10,7 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import retrofit2.http.*
 
-const val BASE_URL = "http://47.109.80.112:9988/"
+const val BASE_URL = "http://127.0.0.1:9988/"  // TODO: Open-gateway IP address and port
 
 private val retrofit by lazy {
     Retrofit.Builder()
